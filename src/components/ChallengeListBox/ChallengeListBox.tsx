@@ -6,23 +6,24 @@ import {
 } from '@ionic/react';
 import { challenge } from '../../data/challenge';
 import { chapter, getChapters } from '../../data/chapter';
+import ChallengeBox from '../ChallengeBox/ChallengeBox';
 import './ChallengeListBox.css';
 
 interface ChallengeListBoxProps {
-  ChallengeList: challenge[];
+  Chapter: chapter;
 }
 
 const listBoxStyle = {
   display: 'flex',
 };
 
-const ChallengeListBox: React.FC<ChallengeListBoxProps> = ({ ChallengeList }) => {
+const ChallengeListBox: React.FC<ChallengeListBoxProps> = ({ Chapter }) => {
   return (
-    <IonList style={listBoxStyle}>
-      {ChallengeList.map(c => <IonItem routerLink={`/q${c.id}`} detail={false}>
-        {c.name}
-      </IonItem>)}
-    </IonList>
+    <IonItem>
+      <IonList style={listBoxStyle}>
+        {Chapter.challengeList.map(c => <ChallengeBox key={c.id} Challenge={c} chapterId={Chapter.id} />)}
+      </IonList>
+    </IonItem>
   );
 };
 

@@ -18,25 +18,25 @@ import {
 import './Home.css';
 import { chapter, getChapters } from '../data/chapter';
 import ChallengeListBox from '../components/ChallengeListBox/ChallengeListBox';
-import { challenge, getChallengeList } from '../data/challenge';
 
 const Home: React.FC = () => {
 
   const [Chapters, setChapters] = useState<chapter[]>([]);
 
-  const [Challenge, setChallengeList] = useState<challenge[]>([]);
+  const [viewEntered, setViewEnter] = useState<boolean>();
 
-  let selectedChapter: number = 0;
+  var [selectedChapter, setSelectedChapter] = useState<number>(0);
 
   useIonViewWillEnter(() => {
     setChapters(getChapters());
-    setChallengeList(getChallengeList());
+
+    setViewEnter(true);
   });
 
   const refresh = (e: CustomEvent) => {
     setTimeout(() => {
       e.detail.complete();
-    }, 3000);
+    }, 1);
   };
 
   const chapterSelectionStyle = {
@@ -67,8 +67,8 @@ const Home: React.FC = () => {
         <div style={chapterSelectionStyle}>
           <IonItem class='chapterSelection'>
             <IonLabel position="floating">Chapter</IonLabel>
-            <IonSelect value="0" interface="popover" placeholder='Select Chapter' onIonChange={(e: any) => (selectedChapter = e.target.value)}>
-              {Chapters.map(c => <IonSelectOption value={c.id}>{c.chapterName}</IonSelectOption>)}
+            <IonSelect interface="popover" value={selectedChapter} onIonChange={e => setSelectedChapter(e.detail.value)}>
+              {Chapters.map(c => <IonSelectOption key={c.id} value={c.id}>{c.chapterName}</IonSelectOption>)}
             </IonSelect>
           </IonItem>
           <IonItem>
@@ -78,14 +78,13 @@ const Home: React.FC = () => {
           </IonItem>
         </div>
 
-        <IonList>
-          {Chapters.map(c => <ChallengeListBox key={c.id ?? c.id === selectedChapter} ChallengeList={c.challengeList} />)}
-        </IonList>
+        {(viewEntered) ?
+          <IonList>
+            {<ChallengeListBox Chapter={Chapters[selectedChapter]} />}
+          </IonList> : null
+        }
 
-        <div>{selectedChapter}</div>
-        {/* <IonList>
-          {messages.map(m => <MessageListItem key={m.id} message={m} />)}
-        </IonList> */}
+        <IonButton onClick={e => console.log(Chapters[selectedChapter])}></IonButton>
       </IonContent>
     </IonPage>
   );

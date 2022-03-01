@@ -22,6 +22,7 @@ import '@ionic/react/css/display.css';
 
 /* Theme variables */
 import './theme/variables.css';
+import ChallengePage from './pages/Challenge/Challenge';
 
 setupIonicReact();
 
@@ -35,8 +36,8 @@ const App: React.FC = () => (
         <Route path="/home" exact={true}>
           <Home />
         </Route>
-        <Route path="/message/:id">
-           <ViewMessage />
+        <Route path="/:chapterId/:challengeId">
+          <ChallengePage />
         </Route>
       </IonRouterOutlet>
     </IonReactRouter>
