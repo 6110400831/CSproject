@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState } from "react";
 import {
   IonButton,
   IonContent,
@@ -13,14 +13,13 @@ import {
   IonSelectOption,
   IonTitle,
   IonToolbar,
-  useIonViewWillEnter
-} from '@ionic/react';
-import './Home.css';
-import { chapter, getChapters } from '../data/chapter';
-import ChallengeListBox from '../components/ChallengeListBox/ChallengeListBox';
+  useIonViewWillEnter,
+} from "@ionic/react";
+import "./Home.css";
+import { chapter, getChapters } from "../data/chapter";
+import ChallengeListBox from "../components/ChallengeListBox/ChallengeListBox";
 
 const Home: React.FC = () => {
-
   const [Chapters, setChapters] = useState<chapter[]>([]);
 
   const [viewEntered, setViewEnter] = useState<boolean>();
@@ -29,6 +28,7 @@ const Home: React.FC = () => {
 
   useIonViewWillEnter(() => {
     setChapters(getChapters());
+    setSelectedChapter(0);
 
     setViewEnter(true);
   });
@@ -40,8 +40,8 @@ const Home: React.FC = () => {
   };
 
   const chapterSelectionStyle = {
-    display: 'flex',
-    justifyContent: 'space-between',
+    display: "flex",
+    justifyContent: "space-between",
   };
 
   return (
@@ -58,17 +58,23 @@ const Home: React.FC = () => {
 
         <IonHeader collapse="condense">
           <IonToolbar>
-            <IonTitle size="large">
-              CS Project
-            </IonTitle>
+            <IonTitle size="large">CS Project</IonTitle>
           </IonToolbar>
         </IonHeader>
 
         <div style={chapterSelectionStyle}>
-          <IonItem class='chapterSelection'>
+          <IonItem class="chapterSelection">
             <IonLabel position="floating">Chapter</IonLabel>
-            <IonSelect interface="popover" value={selectedChapter} onIonChange={e => setSelectedChapter(e.detail.value)}>
-              {Chapters.map(c => <IonSelectOption key={c.id} value={c.id}>{c.chapterName}</IonSelectOption>)}
+            <IonSelect
+              interface="popover"
+              value={selectedChapter}
+              onIonChange={(e) => setSelectedChapter(e.detail.value)}
+            >
+              {Chapters.map((c) => (
+                <IonSelectOption key={c.id} value={c.id}>
+                  {c.chapterName}
+                </IonSelectOption>
+              ))}
             </IonSelect>
           </IonItem>
           <IonItem>
@@ -78,13 +84,15 @@ const Home: React.FC = () => {
           </IonItem>
         </div>
 
-        {(viewEntered) ?
+        {viewEntered ? (
           <IonList>
             {<ChallengeListBox Chapter={Chapters[selectedChapter]} />}
-          </IonList> : null
-        }
+          </IonList>
+        ) : null}
 
-        <IonButton onClick={e => console.log(Chapters[selectedChapter])}></IonButton>
+        <IonButton
+          onClick={(e) => console.log(Chapters[selectedChapter])}
+        ></IonButton>
       </IonContent>
     </IonPage>
   );
