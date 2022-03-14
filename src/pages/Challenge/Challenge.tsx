@@ -24,6 +24,7 @@ import { challenge } from "../../data/challenge";
 import { chapter, getChallenge, getChapter } from "../../data/chapter";
 import OutputBox from "../../components/OutputBox/OutputBox";
 import CodeEditorBox from "../../components/CodeEditorBox/CodeEditorBox";
+import html2canvas from "html2canvas";
 
 function ChallengePage() {
   const [Chapter, setChapter] = useState<chapter>();
@@ -43,13 +44,50 @@ function ChallengePage() {
     setChallenge(
       getChallenge(parseInt(params.chapterId), parseInt(params.challengeId))
     );
-
-    setCode("");
   });
 
   function setCodeValue(text: string) {
     setCode(text);
   }
+
+  const exportAsImage = async (el: any, imageFileName: string) => {
+    const canvas = await html2canvas(el, {
+      windowWidth: 300,
+      windowHeight: 300,
+      scale: 1,
+      logging: false,
+    });
+    // document.getElementById("target-image")!.appendChild(canvas);
+    const outputImage = canvas.toDataURL("image/png", 1.0);
+    const targetImage = await (
+      await html2canvas(targetRef.current!, {
+        windowWidth: 300,
+        windowHeight: 300,
+        scale: 1,
+        logging: false,
+      })
+    ).toDataURL("image/png", 1.0);
+
+    if (outputImage === targetImage) {
+      console.log("PASS");
+    } else {
+      console.log("FAIL");
+    }
+    // downloadImage(image, imageFileName);
+  };
+
+  const downloadImage = (blob: any, fileName: string) => {
+    const fakeLink = window.document.createElement("a");
+    fakeLink.setAttribute("style", "display:none;");
+    fakeLink.download = fileName;
+    fakeLink.href = blob;
+
+    document.body.appendChild(fakeLink);
+    fakeLink.click();
+    document.body.removeChild(fakeLink);
+
+    fakeLink.remove();
+  };
 
   return (
     <IonPage>
@@ -75,7 +113,7 @@ function ChallengePage() {
         </IonToolbar>
       </IonHeader>
 
-      <IonContent fullscreen>
+      <IonContent fullscreen className="px-32">
         <IonGrid className="gridBox">
           <IonRow>
             <IonCol size="4" className="d-flex">
@@ -133,7 +171,10 @@ function ChallengePage() {
             </IonCol>
 
             <IonCol size="4">
-              <div className="target-container d-flex jus-center">
+              <div
+                id="target-image"
+                className="target-container d-flex jus-center"
+              >
                 <img
                   id="target"
                   ref={targetRef}
@@ -146,6 +187,12 @@ function ChallengePage() {
             </IonCol>
           </IonRow>
         </IonGrid>
+        <IonButton
+          className="submit-button"
+          onClick={() => exportAsImage(outputRef.current, "test")}
+        >
+          Submit
+        </IonButton>
       </IonContent>
     </IonPage>
   );

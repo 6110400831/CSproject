@@ -90,9 +90,9 @@ const Home: React.FC = () => {
           </IonList>
         ) : null}
 
-        <IonButton
+        {/* <IonButton
           onClick={(e) => console.log(Chapters[selectedChapter])}
-        ></IonButton>
+        ></IonButton> */}
       </IonContent>
     </IonPage>
   );

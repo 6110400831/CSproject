@@ -1,7 +1,15 @@
-import { IonButton, IonItem, IonLabel, IonList, IonNote } from "@ionic/react";
+import {
+  IonButton,
+  IonItem,
+  IonLabel,
+  IonList,
+  IonNote,
+  useIonViewDidEnter,
+  useIonViewWillEnter,
+} from "@ionic/react";
 import "./CodeEditorBox.css";
 import React, { useRef, useState } from "react";
-import html2canvas from "html2canvas";
+import { defaultCode, getDefaultCode } from "../../data/defaulText";
 
 interface codeEditorBoxProps {
   isProcessing: boolean;
@@ -14,6 +22,18 @@ const CodeEditorBox: React.FC<codeEditorBoxProps> = ({
   code,
   setCode,
 }) => {
+  const [DefaultEdit, setDefaultEdit] = useState<defaultCode>();
+
+  useIonViewWillEnter(async () => {
+    await getDefaultEdit().then(() => {
+      setCode(getDefaultCode().text);
+    });
+  });
+
+  async function getDefaultEdit(): Promise<void> {
+    setDefaultEdit(getDefaultCode());
+  }
+
   return (
     <div id="input-wrapper" className="input-wrapper">
       <textarea
@@ -24,7 +44,10 @@ const CodeEditorBox: React.FC<codeEditorBoxProps> = ({
         }}
         value={code}
       ></textarea>
-      <IonButton className="btn-reset-code" onClick={(e) => setCode("")}>
+      <IonButton
+        className="btn-reset-code"
+        onClick={(e) => setCode(DefaultEdit?.text!)}
+      >
         Reset Code
       </IonButton>
     </div>

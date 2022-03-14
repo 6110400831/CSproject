@@ -15,3 +15,9 @@ textarea {
   height: 500px;
   resize: none;
 }
+
+.submit-button {
+  position: fixed;
+  bottom: 44px;
+  right: 84px;
+}
