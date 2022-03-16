@@ -1,0 +1,11 @@
+.output-wrapper {
+  display: flex;
+  justify-content: center;
+}
+
+.iframe-output {
+  border: 0;
+}
+.iframe-output > body {
+  overflow: hidden !important;
+}
