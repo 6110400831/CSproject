@@ -234,6 +234,20 @@ http://ionicframework.com/docs/theming/ */
   }
 }
 
+/** Modal CSS **/
+#modal .container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.7);
+}
+
 /** Display **/
 .d-flex {
   display: flex !important;
@@ -266,6 +280,20 @@ http://ionicframework.com/docs/theming/ */
 }
 .jus-baseline {
   justify-content: baseline !important;
+}
+
+/** align **/
+.align-center {
+  align-items: center;
+}
+.align-stretch {
+  align-items: stretch;
+}
+.align-fstart {
+  align-items: flex-start;
+}
+.align-fend {
+  align-items: flex-end;
 }
 
 /** margin **/

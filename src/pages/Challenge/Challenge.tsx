@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useState } from "react";
 import {
   IonBackButton,
   IonButton,
@@ -8,10 +8,8 @@ import {
   IonGrid,
   IonHeader,
   IonIcon,
-  IonInput,
-  IonItem,
+  IonImg,
   IonLabel,
-  IonNote,
   IonPage,
   IonRow,
   IonToolbar,
@@ -25,32 +23,42 @@ import { chapter, getChallenge, getChapter } from "../../data/chapter";
 import OutputBox from "../../components/OutputBox/OutputBox";
 import CodeEditorBox from "../../components/CodeEditorBox/CodeEditorBox";
 import html2canvas from "html2canvas";
+import SubmitBox from "../../components/SubmitBox/SubmitBox";
 
 function ChallengePage() {
   const [Chapter, setChapter] = useState<chapter>();
   const [Challenge, setChallenge] = useState<challenge>();
 
   const [isProcessing, setIsProcessing] = useState<boolean>(false);
-  const [code, setCode] = useState<string>();
+  const [code, setCode] = useState<string>("");
 
   const outputWrapperRef = React.useRef<HTMLDivElement>(null);
   const outputRef = React.useRef<HTMLIFrameElement>(null);
-  const targetRef = React.useRef<HTMLImageElement>(null);
+  const targetRef = React.useRef<HTMLIonImgElement>(null);
+
+  const [showModal, setShowModal] = useState<boolean>(false);
 
   const params = useParams<{ chapterId: string; challengeId: string }>();
 
   useIonViewWillEnter(() => {
-    setChapter(getChapter(parseInt(params.chapterId)));
-    setChallenge(
-      getChallenge(parseInt(params.chapterId), parseInt(params.challengeId))
-    );
+    const setPage = async () => {
+      const chapter = await getChapter(parseInt(params.chapterId));
+      const challenge = await getChallenge(
+        parseInt(params.chapterId),
+        parseInt(params.challengeId)
+      );
+      setChapter(chapter);
+      setChallenge(challenge);
+    };
+
+    setPage();
   });
 
   function setCodeValue(text: string) {
     setCode(text);
   }
 
-  const exportAsImage = async (el: any, imageFileName: string) => {
+  async function exportAsImage(el: any, imageFileName: string) {
     const canvas = await html2canvas(el, {
       windowWidth: 300,
       windowHeight: 300,
@@ -68,26 +76,27 @@ function ChallengePage() {
       })
     ).toDataURL("image/png", 1.0);
 
+    // await downloadImage(outputImage, imageFileName);
+
     if (outputImage === targetImage) {
-      console.log("PASS");
+      return true;
     } else {
-      console.log("FAIL");
+      return false;
     }
-    // downloadImage(image, imageFileName);
-  };
+  }
 
-  const downloadImage = (blob: any, fileName: string) => {
-    const fakeLink = window.document.createElement("a");
-    fakeLink.setAttribute("style", "display:none;");
-    fakeLink.download = fileName;
-    fakeLink.href = blob;
+  // const downloadImage = async (blob: any, fileName: string) => {
+  //   const fakeLink = await window.document.createElement("a");
+  //   fakeLink.setAttribute("style", "display:none;");
+  //   fakeLink.download = fileName;
+  //   fakeLink.href = blob;
 
-    document.body.appendChild(fakeLink);
-    fakeLink.click();
-    document.body.removeChild(fakeLink);
+  //   document.body.appendChild(fakeLink);
+  //   fakeLink.click();
+  //   document.body.removeChild(fakeLink);
 
-    fakeLink.remove();
-  };
+  //   fakeLink.remove();
+  // };
 
   return (
     <IonPage>
@@ -164,7 +173,7 @@ function ChallengePage() {
                 ></iframe>
               </div> */}
               <OutputBox
-                code={code!}
+                code={code}
                 outputWrapperRef={outputWrapperRef}
                 outputRef={outputRef}
               />
@@ -175,25 +184,33 @@ function ChallengePage() {
                 id="target-image"
                 className="target-container d-flex jus-center"
               >
-                <img
+                <IonImg
                   id="target"
                   ref={targetRef}
-                  src={require("../../images/Group 23.png")}
-                  width="300px"
-                  height="300px"
+                  src={window.location.origin + Challenge?.image}
                   alt=""
                 />
               </div>
             </IonCol>
           </IonRow>
         </IonGrid>
+
         <IonButton
           className="submit-button"
-          onClick={() => exportAsImage(outputRef.current, "test")}
+          onClick={(e) => {
+            setShowModal(true);
+          }}
         >
           Submit
         </IonButton>
       </IonContent>
+
+      {showModal ? (
+        <SubmitBox
+          check={exportAsImage(outputRef.current, Challenge?.name!)}
+          setShowModal={setShowModal}
+        />
+      ) : null}
     </IonPage>
   );
 }

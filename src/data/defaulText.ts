@@ -9,13 +9,7 @@ const dCode: defaultCode  = {
     "\n" +
     "body {" +
     "\n" +
-    "/* do not change these properties */" +
-    "\n" +
-    "  width: 300px;" +
-    "\n" +
-    "  height: 300px;" +
-    "\n" +
-    "  margin: 0;" +
+    "background: #fff;" +
     "\n" +
     "}" +
     "\n" +

@@ -13,24 +13,29 @@ const chapters: chapter[] = [
         challengeList: [
             {
                 name: 'test11',
-                id: 0
+                id: 0,
+                image: "/assets/images/Group 23.png"
             },
             {
                 name: 'test2',
-                id: 1
+                id: 1,
+                image: "/assets/images/Group 24.png"
             },
             {
                 name: 'test3',
-                id: 2
+                id: 2,
+                image: "/assets/images/Group 23.png"
 
             },
             {
                 name: 'test4',
-                id: 3
+                id: 3,
+                image: "/assets/images/Group 24.png"
             },
             {
                 name: 'test5',
-                id: 4
+                id: 4,
+                image: "/assets/images/Group 23.png"
             },
         ],
     },
@@ -40,24 +45,29 @@ const chapters: chapter[] = [
         challengeList: [
             {
                 name: 'test1',
-                id: 0
+                id: 0,
+                image: "/assets/images/Group 23.png"
             },
             {
                 name: 'test3',
-                id: 1
+                id: 1,
+                image: "/assets/images/Group 24.png"
             },
             {
                 name: 'test4',
-                id: 2
+                id: 2,
+                image: "/assets/images/Group 23.png"
 
             },
             {
                 name: 'test4',
-                id: 3
+                id: 3,
+                image: "/assets/images/Group 24.png"
             },
             {
                 name: 'test5',
-                id: 4
+                id: 4,
+                image: "/assets/images/Group 23.png"
             },
         ],
     },
@@ -67,24 +77,29 @@ const chapters: chapter[] = [
         challengeList: [
             {
                 name: 'test1',
-                id: 0
+                id: 0,
+                image: "/assets/images/Group 23.png"
             },
             {
                 name: 'test2',
-                id: 1
+                id: 1,
+                image: "/assets/images/Group 24.png"
             },
             {
                 name: 'test8',
-                id: 2
+                id: 2,
+                image: "/assets/images/Group 23.png"
 
             },
             {
                 name: 'test7',
-                id: 3
+                id: 3,
+                image: "/assets/images/Group 24.png"
             },
             {
                 name: 'test5',
-                id: 4
+                id: 4,
+                image: "/assets/images/Group 23.png"
             },
         ],
     },
@@ -94,24 +109,29 @@ const chapters: chapter[] = [
         challengeList: [
             {
                 name: 'test1',
-                id: 0
+                id: 0,
+                image: "/assets/images/Group 23.png"
             },
             {
                 name: 'test2',
-                id: 1
+                id: 1,
+                image: "/assets/images/Group 24.png"
             },
             {
                 name: 'test9',
-                id: 2
+                id: 2,
+                image: "/assets/images/Group 23.png"
 
             },
             {
                 name: 'test10',
-                id: 3
+                id: 3,
+                image: "/assets/images/Group 24.png"
             },
             {
                 name: 'test5',
-                id: 4
+                id: 4,
+                image: "/assets/images/Group 23.png"
             },
         ],
     },

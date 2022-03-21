@@ -5,7 +5,7 @@
 
 .iframe-output {
   border: 0;
-}
-.iframe-output > body {
+  outline: 0;
   overflow: hidden !important;
+  margin: 0px !important;
 }

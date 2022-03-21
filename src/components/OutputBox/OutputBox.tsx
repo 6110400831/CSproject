@@ -1,7 +1,5 @@
-import { IonItem, IonLabel, IonList, IonNote } from "@ionic/react";
 import "./OutputBox.css";
-import React, { useRef, useState } from "react";
-import html2canvas from "html2canvas";
+import React from "react";
 
 interface OutputBoxProps {
   code: string;
@@ -24,6 +22,7 @@ const OutputBox: React.FC<OutputBoxProps> = ({
         height="300px"
         title="output"
         srcDoc={code}
+        sandbox=""
       ></iframe>
     </div>
   );

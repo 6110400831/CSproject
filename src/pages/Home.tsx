@@ -36,7 +36,7 @@ const Home: React.FC = () => {
   const refresh = (e: CustomEvent) => {
     setTimeout(() => {
       e.detail.complete();
-    }, 1);
+    }, 1000);
   };
 
   const chapterSelectionStyle = {

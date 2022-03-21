@@ -1,0 +1,41 @@
+.container .content {
+  z-index: 9;
+  width: 350px;
+  height: 220px;
+  background: white;
+  color: black;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  border-radius: 16px;
+  position: relative;
+  animation: animate 0.3s;
+}
+
+.close-button {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  background: inherit;
+  color: white;
+  font-weight: bold;
+  border: none;
+  outline: none;
+  border-radius: 2px;
+}
+
+.button-bar {
+  width: 100%;
+  display: flex;
+  justify-content: space-evenly;
+}
+
+@keyframes animate {
+  from {
+    transform: scale(0.5);
+  }
+  to {
+    transform: scale(1);
+  }
+}
