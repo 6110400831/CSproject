@@ -9,6 +9,7 @@ import {
   IonHeader,
   IonIcon,
   IonImg,
+  IonItem,
   IonLabel,
   IonPage,
   IonRow,
@@ -24,6 +25,7 @@ import OutputBox from "../../components/OutputBox/OutputBox";
 import CodeEditorBox from "../../components/CodeEditorBox/CodeEditorBox";
 import html2canvas from "html2canvas";
 import SubmitBox from "../../components/SubmitBox/SubmitBox";
+import { Route } from "workbox-routing";
 
 function ChallengePage() {
   const [Chapter, setChapter] = useState<chapter>();
@@ -41,18 +43,19 @@ function ChallengePage() {
   const params = useParams<{ chapterId: string; challengeId: string }>();
 
   useIonViewWillEnter(() => {
-    const setPage = async () => {
-      const chapter = await getChapter(parseInt(params.chapterId));
-      const challenge = await getChallenge(
-        parseInt(params.chapterId),
-        parseInt(params.challengeId)
-      );
-      setChapter(chapter);
-      setChallenge(challenge);
-    };
-
+    console.log(Route.length);
     setPage();
   });
+
+  const setPage = async () => {
+    const chapter = await getChapter(parseInt(params.chapterId));
+    const challenge = await getChallenge(
+      parseInt(params.chapterId),
+      parseInt(params.challengeId)
+    );
+    setChapter(chapter);
+    setChallenge(challenge);
+  };
 
   function setCodeValue(text: string) {
     setCode(text);

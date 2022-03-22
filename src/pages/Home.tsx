@@ -3,6 +3,7 @@ import {
   IonButton,
   IonContent,
   IonHeader,
+  IonIcon,
   IonItem,
   IonLabel,
   IonList,
@@ -13,11 +14,14 @@ import {
   IonSelectOption,
   IonTitle,
   IonToolbar,
+  useIonViewDidLeave,
   useIonViewWillEnter,
 } from "@ionic/react";
 import "./Home.css";
 import { chapter, getChapters } from "../data/chapter";
 import ChallengeListBox from "../components/ChallengeListBox/ChallengeListBox";
+import { Route } from "react-router";
+import { personCircle } from "ionicons/icons";
 
 const Home: React.FC = () => {
   const [Chapters, setChapters] = useState<chapter[]>([]);
@@ -27,6 +31,7 @@ const Home: React.FC = () => {
   var [selectedChapter, setSelectedChapter] = useState<number>(0);
 
   useIonViewWillEnter(() => {
+    console.log(Route.length);
     setChapters(getChapters());
     setSelectedChapter(0);
 
@@ -48,7 +53,16 @@ const Home: React.FC = () => {
     <IonPage id="home-page">
       <IonHeader>
         <IonToolbar>
-          <IonTitle>CS Project</IonTitle>
+          <IonTitle size="large">CS Project</IonTitle>
+          <IonIcon
+            className="mr-auto"
+            icon={personCircle}
+            slot="end"
+            color="primary"
+          ></IonIcon>
+          <IonLabel className="ion-text-wrap mr-auto" slot="end">
+            USER
+          </IonLabel>
         </IonToolbar>
       </IonHeader>
       <IonContent fullscreen>
@@ -85,9 +99,7 @@ const Home: React.FC = () => {
         </div>
 
         {viewEntered ? (
-          <IonList>
-            {<ChallengeListBox Chapter={Chapters[selectedChapter]} />}
-          </IonList>
+          <ChallengeListBox Chapter={Chapters[selectedChapter]} />
         ) : null}
 
         {/* <IonButton

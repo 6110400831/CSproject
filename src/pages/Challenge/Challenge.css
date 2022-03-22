@@ -22,7 +22,7 @@ textarea {
   resize: none;
 }
 
-ion-img::part(image) {
+#target::part(image) {
   width: 300px;
   height: 300px;
 }

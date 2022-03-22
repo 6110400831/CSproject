@@ -1,4 +1,4 @@
-import { IonItem, IonList } from "@ionic/react";
+import { IonItem, IonSlides } from "@ionic/react";
 import { chapter } from "../../data/chapter";
 import ChallengeBox from "../ChallengeBox/ChallengeBox";
 import "./ChallengeListBox.css";
@@ -7,19 +7,22 @@ interface ChallengeListBoxProps {
   Chapter: chapter;
 }
 
-const listBoxStyle = {
-  display: "flex",
+const slideConfig = {
+  initialSlide: 0,
+  slidesPerView: 1,
+  grabCursor: true,
+  allowSlideNext: true,
+  allowSlidePrev: true,
+  allowTouchMove: true,
 };
 
 const ChallengeListBox: React.FC<ChallengeListBoxProps> = ({ Chapter }) => {
   return (
-    <IonItem>
-      <IonList style={listBoxStyle}>
-        {Chapter.challengeList.map((c) => (
-          <ChallengeBox key={c.id} Challenge={c} chapterId={Chapter.id} />
-        ))}
-      </IonList>
-    </IonItem>
+    <IonSlides className="challenge-slides" options={slideConfig}>
+      {Chapter.challengeList.map((c) => (
+        <ChallengeBox key={c.id} Challenge={c} chapterId={Chapter.id} />
+      ))}
+    </IonSlides>
   );
 };
 
