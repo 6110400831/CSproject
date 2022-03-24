@@ -46,5 +46,5 @@ Route::controller(ChallengeController::class)->group(function () {
     Route::post('/deletedChallengeRestore','deletedChallengeRestore');
     Route::delete('/permanentDeleteChallenges','permanentDeleteChallenges');
     Route::delete('/permanentDeleteChallenge','permanentDeleteChallenge');
-    Route::get('/imageCompare','imageCompare');
+    Route::post('/imageCompare','imageCompare');
 });

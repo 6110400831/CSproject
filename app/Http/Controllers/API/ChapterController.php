@@ -25,7 +25,9 @@ class ChapterController extends Controller
     public function updateChapter(Request $request)
     {
         $chapter = Chapter::updateOrCreate(
-            ['id'          => $request->id],
+            [
+                'id'          => $request->id
+            ],
             [
                 'name'        => $request->name,
                 'description' => $request->description

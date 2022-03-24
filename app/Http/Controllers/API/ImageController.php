@@ -32,14 +32,14 @@ class ImageController extends Controller
     {
         $chapter = Image::updateOrCreate(
             [
-                'id' => $request->id,
-                'challenge_id' => $request->challenge_id
+                'id' => $request->id
             ],
             [
                 'name'         => $request->name,
                 'type'         => $request->type,
                 'path'         => $request->path,
                 'size'         => $request->size,
+                'challenge_id' => $request->challenge_id
             ]
         );
 

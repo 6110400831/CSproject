@@ -4,13 +4,14 @@ namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
 use App\Traits\ImageTrait;
+use App\Traits\ImageCompareTrait;
 use App\Models\Challenge;
 use App\Models\Image;
 use Illuminate\Http\Request;
 
 class ChallengeController extends Controller
 {
-    use ImageTrait;
+    use ImageTrait, ImageCompareTrait;
 
     public function createChallenge(Request $request)
     {
@@ -25,36 +26,26 @@ class ChallengeController extends Controller
             'chapter_id'  => $json_data->chapter_id
         ]);
 
-        if ($fileData) {
-
-            $image = Image::create([
-                'name'         => $json_fileData->name,
-                'type'         => $json_fileData->type,
-                'path'         => $json_fileData->path,
-                'size'         => $json_fileData->size,
-                'challenge_id' => $challenge->id
-            ]);
-
-            return response()->json([
-                "success" => true,
-                "message" => "Challenge create succesfully."
-            ]);
-        }
-
-        return response()->json([
-            "success" => false,
-            "message" => "Challenge created fail."
+        $image = Image::create([
+            'name'         => $json_fileData->name,
+            'type'         => $json_fileData->type,
+            'path'         => $json_fileData->path,
+            'size'         => $json_fileData->size,
+            'challenge_id' => $challenge->id
         ]);
-        
+
         return response()->json([
-            "message" => "Chapter " . $request->name . " successfully created."
+            "success" => true,
+            "message" => "Challenge create succesfully."
         ]);
     }
     
     public function updateChallenge(Request $request)
     {
         $chapter = Challenge::updateOrCreate(
-            ['id' => $request->id],
+            [
+                'id' => $request->id
+            ],
             [
                 'name'        => $request->name,
                 'description' => $request->description,
@@ -126,27 +117,22 @@ class ChallengeController extends Controller
 
     public function imageCompare(Request $request)
     {
-        $validatedData = $request->validate([
-            'image' => 'required|image|mimes:jpg,png,jpeg,svg|max:2048',
-        ]);
+        $challenge = Challenge::findOrFail($request->challenge_id);
 
-        $name = $request->file('image')->getClientOriginalName();
-        $path = storage_path().'/app/public/images/cat.png';
-        
-        $localImage = file_get_contents($path);
-        $requestImage = file_get_contents($request->file('image'));
-        $base64 = base64_encode($localImage);
-        $test = base64_encode($requestImage);
+        $storageImageName = $challenge->image->name;
+        $storageImagePath = $challenge->image->path;
+        $requestImage   = $request->file('image');
+        $compareResult  = $this->compareImage($storageImageName, $storageImagePath, $requestImage);
 
-        if ($base64 != $test) {
+        if ($compareResult) {
             return response()->json([
-                "success" => true,
-                "message" => "test Fail"
+                "status" => true,
+                "message" => "Correct answer."
             ]);
         }
         return response()->json([
-            "success" => true,
-            "message" => "test Successfully"
+            "status" => false,
+            "message" => "False answer."
         ]);
     }
 }

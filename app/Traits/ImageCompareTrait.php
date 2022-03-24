@@ -4,16 +4,15 @@ namespace App\Traits;
 
 trait ImageCompareTrait {
 
-    public function compareImage($localImageName, $localImagePath, $requestImage)
+    public function compareImage($storageImageName, $storageImagePath, $requestImage)
     {
-        // $name = $request->file('image')->getClientOriginalName();
-        // $path = storage_path().'/app/public/images/cat.png';
+        $path = storage_path().'/app/public/'.$storageImagePath;
         
-        $localImage = file_get_contents($localImagePath);
+        $storageImage = file_get_contents($path);
         $requestImage = file_get_contents($requestImage);
-        $localImage_base64 = base64_encode($localImage);
+        $storageImage_base64 = base64_encode($storageImage);
         $requestImage_base64 = base64_encode($requestImage);
 
-        return $localImage_base64 == $requestImage_base64;
+        return $storageImage_base64 == $requestImage_base64;
     }
 }

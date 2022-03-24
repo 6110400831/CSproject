@@ -6,7 +6,7 @@ trait ImageTrait {
 
     public function uploads($image, $name)
     {
-        if($image) {
+        if( $image ) {
             
             $image_type = $image->getClientOriginalExtension();
             $image_name = $name.'.'.$image_type;
