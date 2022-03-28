@@ -93,4 +93,5 @@ Route::controller(ChallengeController::class)->group(function () {
 
     //test
     Route::post('/testGetChallenge','testGetChallenge');
+    Route::post('/testPostChallenge','testPostChallenge');
 });

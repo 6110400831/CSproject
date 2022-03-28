@@ -7,6 +7,7 @@ use App\Traits\ImageTrait;
 use App\Traits\ImageCompareTrait;
 use App\Models\Challenge;
 use App\Models\Image;
+use App\Models\Test;
 use Illuminate\Http\Request;
 
 class ChallengeController extends Controller
@@ -150,20 +151,29 @@ class ChallengeController extends Controller
     {
         return Challenge::withTrashed()->findOrFail($request->id)->forceDelete();
     }
-
     public function testGetChallenge(Request $request)
+    {
+        return Test::all();
+    }
+
+    public function testPostChallenge(Request $request)
     {
         $json_data = json_decode($request->json);
         $fileData = $this->uploads($request->file('image'), $json_data->name);
         $image = base64_encode($this->getImage($fileData['path']));
-        $test = array(
+
+        $test = Test::create([
             'name'         => $json_data->name,
-            'description'  => $json_data->description,
-            'hint'         => $json_data->hint,
-            'chapter_id'   => $json_data->chapter_id,
+            'type'         => $json_data->type,
+            'path'         => $json_data->path,
+            'size'         => $json_data->size,
             'image_base64' => $image
-        );
-        
-        return $test;
+        ]);
+
+        return response()->json([
+            "success" => true,
+            "data"    => $test,
+            "message" => "Challenge create succesfully."
+        ]);
     }
 }
