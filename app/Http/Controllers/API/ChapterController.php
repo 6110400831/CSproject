@@ -13,8 +13,7 @@ class ChapterController extends Controller
     {
         $chapter = Chapter::create([
             'name'            => $request->name,
-            'description'     => $request->description,
-            'challenge_order' => $request->challenge_order
+            'description'     => $request->description
         ]);
         
         return response()->json([
@@ -80,7 +79,7 @@ class ChapterController extends Controller
     
     public function getDeletedChapter(Request $request)
     {
-        return Chapter::withTrashed()->find($request->id)->get();
+        return Chapter::withTrashed()->findOrFail($request->id)->get();
     }
     
     public function deletedChaptersRestore()
@@ -90,7 +89,7 @@ class ChapterController extends Controller
     
     public function deletedChapterRestore(Request $request)
     {
-        return Chapter::withTrashed()->find($request->id)->restore();
+        return Chapter::withTrashed()->findOrFail($request->id)->restore();
     }
     
     public function permanentDeleteChapters()
@@ -100,6 +99,6 @@ class ChapterController extends Controller
     
     public function permanentDeleteChapter(Request $request)
     {
-        return Chapter::withTrashed()->find($request->id)->forceDelete();
+        return Chapter::withTrashed()->findOrFail($request->id)->forceDelete();
     }
 }

@@ -4,6 +4,12 @@ namespace App\Traits;
 
 trait ImageTrait {
 
+    public function getImage($path)
+    {
+        $storagePath = storage_path().'/app/public/'.$path;
+        return file_get_contents($storagePath);
+    }
+
     public function uploads($image, $name)
     {
         if( $image ) {
