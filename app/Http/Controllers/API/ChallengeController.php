@@ -155,14 +155,14 @@ class ChallengeController extends Controller
     {
         $json_data = json_decode($request->json);
         $fileData = $this->uploads($request->file('image'), $json_data->name);
-
-        $test = array([
-            'name'        => $json_data->name,
-            'description' => $json_data->description,
-            'hint'        => $json_data->hint,
-            'chapter_id'  => $json_data->chapter_id,
-            'image'       => $this->getImage($fileData['path'])
-        ]);
+        $image = base64_encode($this->getImage($fileData['path']));
+        $test = array(
+            'name'         => $json_data->name,
+            'description'  => $json_data->description,
+            'hint'         => $json_data->hint,
+            'chapter_id'   => $json_data->chapter_id,
+            'image_base64' => $image
+        );
         
         return $test;
     }
