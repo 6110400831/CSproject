@@ -13,9 +13,4 @@ class Image extends Model
 
     protected $dates = ['deleted_at'];
     protected $fillable = ['id', 'name', 'type', 'path', 'size', 'challenge_id'];
-
-    public function challenge()
-    {
-        return $this->belongsTo(Challenge::class);
-    }
 }

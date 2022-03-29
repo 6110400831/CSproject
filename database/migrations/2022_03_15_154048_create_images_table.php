@@ -19,7 +19,6 @@ return new class extends Migration
             $table->string('type');
             $table->string('path');
             $table->string('size');
-            $table->bigInteger('challenge_id');
             $table->softDeletes();
             $table->timestamps();
         });
