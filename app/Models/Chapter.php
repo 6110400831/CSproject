@@ -12,7 +12,7 @@ class Chapter extends Model
     use SoftDeletes;
 
     protected $dates = ['deleted_at'];
-    protected $fillable = ['id', 'name', 'description', 'challenge_order'];
+    protected $fillable = ['id', 'name', 'description'];
 
     public function challenges()
     {

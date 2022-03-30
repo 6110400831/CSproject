@@ -21,6 +21,6 @@ class Challenge extends Model
 
     Public function getImage()
     {
-        return asset($this->image);
+        return asset('storage/'.$this->image);
     }
 }

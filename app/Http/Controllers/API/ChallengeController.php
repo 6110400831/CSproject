@@ -47,54 +47,52 @@ class ChallengeController extends Controller
         $json_data = json_decode($request->json);
         $fileData = $this->uploads($request->file('image'), $json_data->name);
 
-        $chapter = Challenge::updateOrCreate(
+        $challenge = Challenge::updateOrCreate(
             [
-                'id' => $request->id
+                'id'          => $request->id
             ],
             [
-                'name'        => $request->name,
-                'description' => $request->description,
-                'hint'        => $request->hint,
-                'chapter_id'  => $request->chapter_id
+                'name'        => $json_data->name,
+                'description' => $json_data->description,
+                'hint'        => $json_data->hint,
+                'image'       => $fileData['path'],
+                'chapter_id'  => $json_data->chapter_id
             ]
         );
 
-        $image = Image::updateOrCreate(
-            [
-                'id' => $request->id
-            ],
-            [
-                'name'         => $fileData['name'],
-                'type'         => $fileData['type'],
-                'path'         => $fileData['path'],
-                'size'         => $fileData['size'],
-                'challenge_id' => $challenge->id
-            ]
-        );
+        if (!$challenge) {
+            return response()->json([
+                "success" => false,
+                "data"    => $challenge,
+                "message" => "Challenge create failed."
+            ]);
+        }
 
         return response()->json([
-            "message" => "Chapter " . $request->id . " successfully updated."
+            "message" => "Challenge successfully updated."
         ]);
     }
 
     public function imageCompare(Request $request)
     {
-        $challenge = Challenge::findOrFail($request->challenge_id);
+        $challenge = Challenge::findOrFail($request->id);
 
-        $storageImageName = $challenge->image->name;
-        $storageImagePath = $challenge->image->path;
+        $storageImageName = $challenge->name;
+        $storageImagePath = $challenge->image;
         $requestImage   = $request->file('image');
         $compareResult  = $this->compareImage($storageImageName, $storageImagePath, $requestImage);
 
-        if ($compareResult) {
+        if (!$compareResult) {
             return response()->json([
-                "status" => true,
-                "message" => "Correct answer."
+                "status" => false,
+                "data"    => $compareResult,
+                "message" => "False answer."
             ]);
         }
         return response()->json([
-            "status" => false,
-            "message" => "False answer."
+            "status" => true,
+            "data"    => $compareResult,
+            "message" => "Correct answer."
         ]);
     }
 
@@ -111,22 +109,23 @@ class ChallengeController extends Controller
     public function getChallengeImage(Request $request)
     {
         $challenge = Challenge::findOrFail($request->id);
-        return asset('storage/'.$challenge->image);
+        return $challenge->getImage();
     }
     
     public function deleteChallenge(Request $request)
     {
         $challenge = Challenge::findOrFail($request->id);
         if ($challenge->exists()) {
-            $challenge->image->delete();
             $challenge->delete();
             return response()->json([
-                "message" => "Challenge " . $request->id . " successfully deleted."
+                "status" => true,
+                "message" => "Challenge successfully deleted."
             ]);
         }
 
         return response()->json([
-            "message" => "Challenge  " . $request->id . " not found."
+            "status" => false,
+            "message" => "Challenge not found."
         ]);
     }
     
@@ -158,25 +157,5 @@ class ChallengeController extends Controller
     public function permanentDeleteChallenge(Request $request)
     {
         return Challenge::withTrashed()->findOrFail($request->id)->forceDelete();
-    }
-
-    public function testGetChallengeImage(Request $request)
-    {
-        $image = Image::findOrFail($request->id);
-        return asset('storage/'.$image->path);
-    }
-
-    public function testPostChallenge(Request $request)
-    {
-        $fileData = $this->uploads($request->file('image'), $request->name);
-
-        $image = Image::create([
-            'name'         => $fileData['name'],
-            'type'         => $fileData['type'],
-            'path'         => $fileData['path'],
-            'size'         => $fileData['size']
-        ]);
-
-        return $image;
     }
 }

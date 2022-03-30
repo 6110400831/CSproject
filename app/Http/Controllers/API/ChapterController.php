@@ -15,9 +15,19 @@ class ChapterController extends Controller
             'name'            => $request->name,
             'description'     => $request->description
         ]);
+
+        if (!$chapter) {
+            return response()->json([
+                "success" => false,
+                "data"    => $chapter,
+                "message" => "Chapter create failed."
+            ]);
+        }
         
         return response()->json([
-            "message" => "Chapter " . $request->name . " successfully created."
+            "success" => true,
+            "data"    => $chapter,
+            "message" => "Chapter successfully created."
         ]);
     }
     
@@ -33,8 +43,18 @@ class ChapterController extends Controller
             ]
         );
 
+        if (!$chapter) {
+            return response()->json([
+                "success" => false,
+                "data"    => $chapter,
+                "message" => "Chapter update failed."
+            ]);
+        }
+
         return response()->json([
-            "message" => "Chapter " . $request->name . " successfully updated."
+            "success" => true,
+            "data"    => $chapter,
+            "message" => "Chapter successfully updated."
         ]);
     }
 
@@ -56,19 +76,21 @@ class ChapterController extends Controller
     public function deleteChapter(Request $request)
     {
         $chapter = Chapter::findOrFail($request->id);
+        
         if ($chapter->exists()) {
             foreach($chapter->challenges as $challenge) {
-                $challenge->image->delete();
                 $challenge->delete();
             }
             $chapter->delete();
             return response()->json([
-                "message" => "Chapter " . $request->id . " successfully deleted."
+                "success" => true,
+                "message" => "Chapter successfully deleted."
             ]);
         }
 
         return response()->json([
-            "message" => "Chapter " . $request->id . " not found."
+            "success" => false,
+            "message" => "Chapter not found."
         ]);
     }
     
