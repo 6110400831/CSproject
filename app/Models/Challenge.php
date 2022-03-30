@@ -19,8 +19,8 @@ class Challenge extends Model
         return $this->belongsTo(Chapter::class);
     }
 
-    public function image()
+    Public function getImage()
     {
-        return $this->hasOne(Image::class);
+        return asset($this->image);
     }
 }

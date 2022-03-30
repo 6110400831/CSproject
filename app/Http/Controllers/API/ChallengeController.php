@@ -151,9 +151,11 @@ class ChallengeController extends Controller
     {
         return Challenge::withTrashed()->findOrFail($request->id)->forceDelete();
     }
-    public function testGetChallenge()
+
+    public function testGetChallengeImage(Request $request)
     {
-        return Image::all()->first();
+        $image = Image::findOrFail($request->id);
+        return asset($image->path);
     }
 
     public function testPostChallenge(Request $request)

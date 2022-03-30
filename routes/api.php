@@ -92,6 +92,6 @@ Route::controller(ChallengeController::class)->group(function () {
     Route::delete('/permanentDeleteChallenge','permanentDeleteChallenge');
 
     //test
-    Route::get('/testGetChallenge','testGetChallenge');
+    Route::get('/testGetChallengeImage','testGetChallengeImage');
     Route::post('/testPostChallenge','testPostChallenge');
 });
