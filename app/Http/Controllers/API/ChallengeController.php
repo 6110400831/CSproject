@@ -160,7 +160,6 @@ class ChallengeController extends Controller
 
     public function testPostChallenge(Request $request)
     {
-        $json_data = json_decode($request->json);
         $fileData = $this->uploads($request->file('image'), $request->name);
 
         $image = Image::create([
