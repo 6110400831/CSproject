@@ -16,6 +16,6 @@ class Story extends Model
 
     public function getImage()
     {
-        return asset('storage/'.$this->image);
+        return asset($this->image);
     }
 }

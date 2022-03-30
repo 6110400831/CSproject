@@ -10,7 +10,7 @@ trait ImageTrait {
             
             $image_type = $image->getClientOriginalExtension();
             $image_name = $name.'.'.$image_type;
-            $image_path = $image->storeAs($type.$name, $image_name, 'public');
+            $image_path = 'storage/'.$image->storeAs($type.$name, $image_name, 'public');
             $image_size = $this->imageSize($image);
 
             return $image = [

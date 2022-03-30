@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\ChallengeCollection;
+use App\Http\Resources\ChallengeResource;
 use App\Models\Challenge;
 use App\Traits\ImageTrait;
 use Illuminate\Http\Request;
@@ -95,12 +97,12 @@ class ChallengeController extends Controller
 
     public function getAllChallenge()
     {
-        return Challenge::all();
+        return new ChallengeCollection(Challenge::all());
     }
     
     public function getChallenge(Request $request)
     {
-        return Challenge::findOrFail($request->id);
+        return new ChallengeResource(Challenge::findOrFail($request->id));
     }
 
     public function getChallengeImage(Request $request)

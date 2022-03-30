@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\StoryCollection;
+use App\Http\Resources\StoryResource;
 use App\Models\Story;
 use App\Traits\ImageTrait;
 use Illuminate\Http\Request;
@@ -73,29 +75,30 @@ class StoryController extends Controller
 
     public function getAllStory()
     {
-        return Story::all();
+        return new StoryCollection(Story::all());
     }
     
     public function getStory(Request $request)
     {
-        return Story::findOrFail($request->id);
+        return new StoryResource(Story::findOrFail($request->id));
     }
     
     public function getStoryWithCondition(Request $request)
     {
         $story = Story::where('condition', '<=', $request->clear_count)->get();
+        $story_collection = new StoryCollection($story);
 
         if (!$story) {
             return response()->json([
                 "success" => false,
-                "data"    => $story,
+                "data"    => $story_collection,
                 "message" => "Story not found."
             ]);
         }
 
         return response()->json([
             "success" => true,
-            "data"    => $story,
+            "data"    => $story_collection,
             "message" => "Story has been deliver."
         ]);
     }
