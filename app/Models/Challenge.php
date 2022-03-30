@@ -12,7 +12,7 @@ class Challenge extends Model
     use SoftDeletes;
 
     protected $dates = ['deleted_at'];
-    protected $fillable = ['id', 'name', 'description', 'hint', 'chapter_id'];
+    protected $fillable = ['id', 'name', 'description', 'hint', 'image', 'chapter_id'];
 
     public function chapter()
     {

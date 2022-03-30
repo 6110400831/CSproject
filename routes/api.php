@@ -79,6 +79,7 @@ Route::controller(ChallengeController::class)->group(function () {
     //no auth
     Route::get('/getAllChallenge','getAllChallenge');
     Route::get('/getChallenge','getChallenge');
+    Route::get('/getChallengeImage','getChallengeImage');
     Route::post('/imageCompare','imageCompare');
 
     //auth

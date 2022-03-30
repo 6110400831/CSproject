@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('name');
             $table->string('description');
             $table->string('hint');
+            $table->string('image');
             $table->bigInteger('chapter_id');
             $table->softDeletes();
             $table->timestamps();

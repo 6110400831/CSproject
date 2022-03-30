@@ -7,7 +7,7 @@ trait ImageTrait {
     public function getImage($path)
     {
         $storagePath = storage_path().'/app/public/'.$path;
-        return file_get_contents($storagePath);
+        return $storagePath;
     }
 
     public function uploads($image, $name)

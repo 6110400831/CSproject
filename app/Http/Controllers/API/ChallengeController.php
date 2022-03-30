@@ -23,19 +23,21 @@ class ChallengeController extends Controller
             'name'        => $json_data->name,
             'description' => $json_data->description,
             'hint'        => $json_data->hint,
+            'image'       => $fileData['path'],
             'chapter_id'  => $json_data->chapter_id
         ]);
 
-        $image = Image::create([
-            'name'         => $fileData['name'],
-            'type'         => $fileData['type'],
-            'path'         => $fileData['path'],
-            'size'         => $fileData['size'],
-            'challenge_id' => $challenge->id
-        ]);
+        if (!$challenge) {
+            return response()->json([
+                "success" => false,
+                "data"    => $challenge,
+                "message" => "Challenge create failed."
+            ]);
+        }
 
         return response()->json([
             "success" => true,
+            "data"    => $challenge,
             "message" => "Challenge create succesfully."
         ]);
     }
@@ -105,6 +107,12 @@ class ChallengeController extends Controller
     {
         return Challenge::findOrFail($request->id);
     }
+
+    public function getChallengeImage(Request $request)
+    {
+        $challenge = Challenge::findOrFail($request->id);
+        return asset('storage/'.$challenge->image);
+    }
     
     public function deleteChallenge(Request $request)
     {
@@ -155,7 +163,7 @@ class ChallengeController extends Controller
     public function testGetChallengeImage(Request $request)
     {
         $image = Image::findOrFail($request->id);
-        return asset($image->path);
+        return asset('storage/'.$image->path);
     }
 
     public function testPostChallenge(Request $request)
