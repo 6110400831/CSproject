@@ -5,7 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\API\AuthController;
 use App\Http\Controllers\API\ChapterController;
 use App\Http\Controllers\API\ChallengeController;
-use App\Http\Controllers\API\ImageController;
+use App\Http\Controllers\API\StoryController;
 
 /*
 |--------------------------------------------------------------------------
@@ -49,6 +49,17 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     //     Route::delete('/permanentDeleteChallenges','permanentDeleteChallenges');
     //     Route::delete('/permanentDeleteChallenge','permanentDeleteChallenge');
     // });
+
+    // Route::controller(StoryController::class)->group(function () {
+    //     Route::post('/createStory','createStory');
+    //     Route::post('/updateStory','updateStory');
+    //     Route::delete('/deleteStory','deleteStory');
+    //     Route::get('/getDeletedStories','getDeletedStories');
+    //     Route::post('/deletedStoriesRestore','deletedStoriesRestore');
+    //     Route::post('/deletedStoryRestore','deletedStoryRestore');
+    //     Route::delete('/permanentDeleteStories','permanentDeleteStories');
+    //     Route::delete('/permanentDeleteStory','permanentDeleteStory');
+    // });
 });
 
 Route::controller(AuthController::class)->group(function () {
@@ -91,4 +102,22 @@ Route::controller(ChallengeController::class)->group(function () {
     Route::post('/deletedChallengeRestore','deletedChallengeRestore');
     Route::delete('/permanentDeleteChallenges','permanentDeleteChallenges');
     Route::delete('/permanentDeleteChallenge','permanentDeleteChallenge');
+});
+
+Route::controller(StoryController::class)->group(function () {
+    //no auth
+    Route::get('/getAllStory','getAllStory');
+    Route::get('/getStory','getStory');
+    Route::get('/getStoryImage','getStoryImage');
+    Route::post('/getStoryWithCondition','getStoryWithCondition');
+    Route::get('/test','test');
+
+    Route::post('/createStory','createStory');
+    Route::post('/updateStory','updateStory');
+    Route::delete('/deleteStory','deleteStory');
+    Route::get('/getDeletedStories','getDeletedStories');
+    Route::post('/deletedStoriesRestore','deletedStoriesRestore');
+    Route::post('/deletedStoryRestore','deletedStoryRestore');
+    Route::delete('/permanentDeleteStories','permanentDeleteStories');
+    Route::delete('/permanentDeleteStory','permanentDeleteStory');
 });

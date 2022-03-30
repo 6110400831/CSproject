@@ -4,13 +4,13 @@ namespace App\Traits;
 
 trait ImageTrait {
 
-    public function uploads($image, $name)
+    public function uploads($image, $name, $type)
     {
         if( $image ) {
             
             $image_type = $image->getClientOriginalExtension();
             $image_name = $name.'.'.$image_type;
-            $image_path = $image->storeAs('challenges/'.$name, $image_name, 'public');
+            $image_path = $image->storeAs($type.$name, $image_name, 'public');
             $image_size = $this->imageSize($image);
 
             return $image = [
@@ -20,6 +20,18 @@ trait ImageTrait {
                 'size' => $image_size
             ];
         }
+    }
+    
+    public function compareImage($storageImageName, $storageImagePath, $requestImage)
+    {
+        $path = storage_path().'/app/public/'.$storageImagePath;
+        
+        $storageImage = file_get_contents($path);
+        $requestImage = file_get_contents($requestImage);
+        $storageImage_base64 = base64_encode($storageImage);
+        $requestImage_base64 = base64_encode($requestImage);
+
+        return $storageImage_base64 == $requestImage_base64;
     }
 
     public function imageSize($image, $precision = 2)

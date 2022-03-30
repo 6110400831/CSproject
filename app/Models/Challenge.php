@@ -19,7 +19,7 @@ class Challenge extends Model
         return $this->belongsTo(Chapter::class);
     }
 
-    Public function getImage()
+    public function getImage()
     {
         return asset('storage/'.$this->image);
     }

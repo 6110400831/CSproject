@@ -3,21 +3,18 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
-use App\Traits\ImageTrait;
-use App\Traits\ImageCompareTrait;
 use App\Models\Challenge;
-use App\Models\Image;
-use App\Models\Story;
+use App\Traits\ImageTrait;
 use Illuminate\Http\Request;
 
 class ChallengeController extends Controller
 {
-    use ImageTrait, ImageCompareTrait;
+    use ImageTrait;
 
     public function createChallenge(Request $request)
     {
         $json_data = json_decode($request->json);
-        $fileData = $this->uploads($request->file('image'), $json_data->name);
+        $fileData = $this->uploads($request->file('image'), $json_data->name, 'challenge/');
 
         $challenge = Challenge::create([
             'name'        => $json_data->name,
@@ -45,7 +42,7 @@ class ChallengeController extends Controller
     public function updateChallenge(Request $request)
     {
         $json_data = json_decode($request->json);
-        $fileData = $this->uploads($request->file('image'), $json_data->name);
+        $fileData = $this->uploads($request->file('image'), $json_data->name, 'challenge/');
 
         $challenge = Challenge::updateOrCreate(
             [
@@ -108,13 +105,13 @@ class ChallengeController extends Controller
 
     public function getChallengeImage(Request $request)
     {
-        $challenge = Challenge::findOrFail($request->id);
-        return $challenge->getImage();
+        return Challenge::findOrFail($request->id)->getImage();
     }
     
     public function deleteChallenge(Request $request)
     {
         $challenge = Challenge::findOrFail($request->id);
+
         if ($challenge->exists()) {
             $challenge->delete();
             return response()->json([

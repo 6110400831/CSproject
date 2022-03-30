@@ -12,5 +12,10 @@ class Story extends Model
     use SoftDeletes;
 
     protected $dates = ['deleted_at'];
-    protected $fillable = ['id', 'name', 'description', 'image'];
+    protected $fillable = ['id', 'name', 'description', 'condition', 'image'];
+
+    public function getImage()
+    {
+        return asset('storage/'.$this->image);
+    }
 }

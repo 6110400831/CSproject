@@ -3,58 +3,71 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
-use App\Models\Chapter;
-use App\Models\Challenge;
+use App\Models\Story;
+use App\Traits\ImageTrait;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class StoryController extends Controller
 {
+    use ImageTrait;
+
     public function createStory(Request $request)
     {
         $json_data = json_decode($request->json);
-        $fileData = $this->uploads($request->file('image'), $json_data->name);
+        $fileData = $this->uploads($request->file('image'), $json_data->name, 'story/');
 
         $story = Story::create([
+            'name'        => $json_data->name,
+            'description' => $json_data->description,
+            'condition'   => $json_data->condition,
+            'image'       => $fileData['path']
         ]);
+
+        if (!$story) {
+            return response()->json([
+                "success" => false,
+                "data"    => $story,
+                "message" => "Story create failed."
+            ]);
+        }
 
         return response()->json([
             "success" => true,
-            "message" => "Challenge create succesfully."
+            "data"    => $story,
+            "message" => "Story create succesfully."
         ]);
     }
     
-    public function updateChallenge(Request $request)
+    public function updateStory(Request $request)
     {
         $json_data = json_decode($request->json);
-        $fileData = $this->uploads($request->file('image'), $json_data->name);
+        $fileData = $this->uploads($request->file('image'), $json_data->name, 'story/');
         
-        $chapter = Challenge::updateOrCreate(
+        $story = Story::updateOrCreate(
             [
-                'id' => $request->id
+                'id'          => $request->id
             ],
             [
-                'name'        => $request->name,
-                'description' => $request->description,
-                'hint'        => $request->hint,
-                'chapter_id'  => $request->chapter_id
+                'name'        => $json_data->name,
+                'description' => $json_data->description,
+                'condition'   => $json_data->condition,
+                'image'       => $fileData['path']
             ]
         );
 
-        $image = Image::updateOrCreate(
-            [
-                'id' => $request->id
-            ],
-            [
-                'name'         => $fileData['name'],
-                'type'         => $fileData['type'],
-                'path'         => $fileData['path'],
-                'size'         => $fileData['size'],
-                'challenge_id' => $challenge->id
-            ]
-        );
+        if (!$story) {
+            return response()->json([
+                "success" => false,
+                "data"    => $story,
+                "message" => "Story create failed."
+            ]);
+        }
 
         return response()->json([
-            "message" => "Chapter " . $request->id . " successfully updated."
+            "success" => true,
+            "data"    => $story,
+            "message" => "Story create succesfully."
         ]);
     }
 
@@ -68,22 +81,48 @@ class StoryController extends Controller
         return Story::findOrFail($request->id);
     }
     
-    public function deleteStory(Request $request)
+    public function getStoryWithCondition(Request $request)
     {
-        $story = Story::findOrFail($request->id);
-        if ($story->exists()) {
-            $story->delete();
+        $story = Story::where('condition', '<=', $request->clear_count)->get();
+
+        if (!$story) {
             return response()->json([
-                "message" => "Story " . $request->id . " successfully deleted."
+                "success" => false,
+                "data"    => $story,
+                "message" => "Story not found."
             ]);
         }
 
         return response()->json([
-            "message" => "Story  " . $request->id . " not found."
+            "success" => true,
+            "data"    => $story,
+            "message" => "Story has been deliver."
+        ]);
+    }
+
+    public function getStoryImage(Request $request)
+    {
+        return Story::findOrFail($request->id)->getImage();
+    }
+    
+    public function deleteStory(Request $request)
+    {
+        $story = Story::findOrFail($request->id)->delete();
+        if ($story->exists()) {
+            $story->delete();
+            return response()->json([
+                "status" => true,
+                "message" => "Story successfully deleted."
+            ]);
+        }
+
+        return response()->json([
+            "status" => false,
+            "message" => "Story not found."
         ]);
     }
     
-    public function getDeletedStorys()
+    public function getDeletedStories()
     {
         return Story::onlyTrashed()->get();
     }
@@ -93,7 +132,7 @@ class StoryController extends Controller
         return Story::withTrashed()->findOrFail($request->id)->get();
     }
     
-    public function deletedStorysRestore()
+    public function deletedStoriesRestore()
     {
         return Story::withTrashed()->restore();
     }
@@ -103,7 +142,7 @@ class StoryController extends Controller
         return Story::withTrashed()->findOrFail($request->id)->restore();
     }
     
-    public function permanentDeleteStorys()
+    public function permanentDeleteStories()
     {
         return Story::withTrashed()->forceDelete();
     }

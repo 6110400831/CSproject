@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\API;
 
+use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -10,14 +11,16 @@ class AuthController extends Controller
 {
     public function register(Request $request) {
         $fields = $request->validate([
-            'name' => 'required|string',
-            'email' => 'required|string|unique:users,email',
+            'name'     => 'required|string',
+            'role'     => 'required|string',
+            'email'    => 'required|string|unique:users,email',
             'password' => 'required|string|confirmed'
         ]);
 
         $user = User::create([
-            'name' => $fields['name'],
-            'email' => $fields['email'],
+            'name'     => $fields['name'],
+            'role'     => $fields['role'],
+            'email'    => $fields['email'],
             'password' => bcrypt($fields['password'])
         ]);
 
