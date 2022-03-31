@@ -16,7 +16,7 @@ class LockCollection extends ResourceCollection
     {
         return [
             'data' => $this->collection->map(function ($each) {
-                $each->image = asset('storage/lock/lock.png');
+                $each->image = asset('storage/lock/lock.jpg');
                 return $each;
             }),
         ];
