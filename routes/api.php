@@ -110,8 +110,9 @@ Route::controller(StoryController::class)->group(function () {
     Route::get('/getStory','getStory');
     Route::get('/getStoryImage','getStoryImage');
     Route::post('/getStoryWithCondition','getStoryWithCondition');
-    Route::get('/test','test');
+    Route::post('/getStoryWithoutCondition','getStoryWithoutCondition');
 
+    //auth
     Route::post('/createStory','createStory');
     Route::post('/updateStory','updateStory');
     Route::delete('/deleteStory','deleteStory');

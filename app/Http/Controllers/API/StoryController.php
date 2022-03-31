@@ -4,6 +4,7 @@ namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
 use App\Http\Resources\StoryCollection;
+use App\Http\Resources\LockCollection;
 use App\Http\Resources\StoryResource;
 use App\Models\Story;
 use App\Traits\ImageTrait;
@@ -100,6 +101,26 @@ class StoryController extends Controller
             "success" => true,
             "data"    => $story_collection,
             "message" => "Story has been deliver."
+        ]);
+    }
+
+    public function getStoryWithoutCondition(Request $request)
+    {
+        $story = Story::where('condition', '>', $request->clear_count)->get();
+        $lock_collection = new LockCollection($story);
+
+        if (!$story) {
+            return response()->json([
+                "success" => false,
+                "data"    => $lock_collection,
+                "message" => "Story lock not found."
+            ]);
+        }
+
+        return response()->json([
+            "success" => true,
+            "data"    => $lock_collection,
+            "message" => "Story lock has been deliver."
         ]);
     }
 
