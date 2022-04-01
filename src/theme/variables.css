@@ -1,6 +1,21 @@
 /* Ionic Variables and Theming. For more info, please see:
 http://ionicframework.com/docs/theming/ */
 
+ion-app {
+}
+
+@media only screen and (max-width: 800px) {
+  ion-content {
+    --padding-end: 16px;
+    --padding-start: 16px;
+  }
+}
+
+ion-content {
+  --padding-end: 32px;
+  --padding-start: 32px;
+}
+
 /** Ionic CSS Variables **/
 :root {
   /** primary **/
@@ -234,20 +249,6 @@ http://ionicframework.com/docs/theming/ */
   }
 }
 
-/** Modal CSS **/
-#modal .container {
-  position: fixed;
-  top: 0;
-  left: 0;
-  bottom: 0;
-  right: 0;
-  height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: rgba(0, 0, 0, 0.7);
-}
-
 /** width&height **/
 .w-100 {
   width: 100%;
@@ -332,6 +333,14 @@ http://ionicframework.com/docs/theming/ */
 }
 .ml-auto {
   margin-left: auto !important;
+}
+.mx-16 {
+  margin-left: 16px;
+  margin-right: 16px;
+}
+.my-16 {
+  margin-top: 16px;
+  margin-bottom: 16px;
 }
 
 /** padding **/

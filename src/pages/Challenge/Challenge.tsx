@@ -9,27 +9,27 @@ import {
   IonHeader,
   IonIcon,
   IonImg,
-  IonItem,
   IonLabel,
+  IonModal,
   IonPage,
   IonRow,
   IonToolbar,
   useIonViewWillEnter,
 } from "@ionic/react";
-import { personCircle } from "ionicons/icons";
+import { personCircle, closeOutline } from "ionicons/icons";
 import { useParams } from "react-router";
 import "./Challenge.css";
-import { challenge } from "../../data/challenge";
-import { chapter, getChallenge, getChapter } from "../../data/chapter";
 import OutputBox from "../../components/OutputBox/OutputBox";
 import CodeEditorBox from "../../components/CodeEditorBox/CodeEditorBox";
 import html2canvas from "html2canvas";
-import SubmitBox from "../../components/SubmitBox/SubmitBox";
-import { Route } from "workbox-routing";
+import { getViewerStatus, viewerStatus } from "../../data/viewerStatus";
+import { compareImage, getChallenge } from "../../data/challengeAPI";
+import { getChapter } from "../../data/chapterAPI";
 
 function ChallengePage() {
-  const [Chapter, setChapter] = useState<chapter>();
-  const [Challenge, setChallenge] = useState<challenge>();
+  const [chapter, setChapter] = useState<any>();
+  const [challenge, setChallenge] = useState<any>();
+  const [viewer, setViewer] = useState<string>();
 
   const [isProcessing, setIsProcessing] = useState<boolean>(false);
   const [code, setCode] = useState<string>("");
@@ -37,22 +37,30 @@ function ChallengePage() {
   const outputWrapperRef = React.useRef<HTMLDivElement>(null);
   const outputRef = React.useRef<HTMLIFrameElement>(null);
   const targetRef = React.useRef<HTMLIonImgElement>(null);
+  const [TrueOrFalse, setTrueOfFalse] = useState<boolean>(false);
 
   const [showModal, setShowModal] = useState<boolean>(false);
+  const [contentText, setText] = useState<string>("Confirm Submit");
+  const [confirmButton, setConfirmButtonText] = useState<string>("YES");
+  const [noButton, setNoButtonText] = useState<string>("NO");
 
   const params = useParams<{ chapterId: string; challengeId: string }>();
 
   useIonViewWillEnter(() => {
-    console.log(Route.length);
+    setViewer(getViewerStatus);
+
     setPage();
   });
 
   const setPage = async () => {
-    const chapter = await getChapter(parseInt(params.chapterId));
-    const challenge = await getChallenge(
-      parseInt(params.chapterId),
-      parseInt(params.challengeId)
-    );
+    const chapter = (
+      await Promise.resolve(getChapter(parseInt(params.chapterId)))
+    ).data;
+    const challenge = (
+      await Promise.resolve(getChallenge(parseInt(params.challengeId)))
+    ).data.data;
+    //console.log(chapter);
+    console.log(challenge);
     setChapter(chapter);
     setChallenge(challenge);
   };
@@ -69,17 +77,23 @@ function ChallengePage() {
       logging: false,
     });
     const outputImage = canvas.toDataURL("image/png", 1.0);
+
     const targetImage = await (
       await html2canvas(targetRef.current!, {
         windowWidth: 300,
         windowHeight: 300,
         scale: 1,
         logging: false,
+        useCORS: true,
       })
     ).toDataURL("image/png", 1.0);
 
-    //document.getElementById("target-image")!.appendChild(canvas);
-    await downloadImage(outputImage, imageFileName);
+    console.log(
+      compareImage(outputImage.split(",")[1], parseInt(params.challengeId))
+    );
+
+    // console.log(outputImage);
+    // console.log(targetImage);
 
     if (outputImage === targetImage) {
       return true;
@@ -91,7 +105,7 @@ function ChallengePage() {
   const downloadImage = async (blob: any, fileName: string) => {
     const fakeLink = await window.document.createElement("a");
     fakeLink.setAttribute("style", "display:none;");
-    fakeLink.download = fileName;
+    fakeLink.download = window.location.origin + fileName;
     fakeLink.href = blob;
 
     document.body.appendChild(fakeLink);
@@ -100,6 +114,44 @@ function ChallengePage() {
 
     fakeLink.remove();
   };
+
+  function setCloseModal() {
+    setShowModal(false);
+
+    setText("Confirm Submit");
+    setConfirmButtonText("YES");
+    setNoButtonText("NO");
+  }
+
+  function setSubmitConfirm(check: boolean) {
+    if (contentText === "Confirm Submit") {
+      if (check) {
+        setText("PASS");
+        setConfirmButtonText("Go to home");
+        //setNoButtonText("NO");
+      } else {
+        setText("try again plz");
+        setConfirmButtonText("Try again");
+        //setNoButtonText("NO");
+      }
+    } else if (contentText === "try again plz") {
+      setShowModal(false);
+    } else if (contentText === "PASS") {
+      window.location.href = "/home";
+    }
+  }
+
+  function setCancelButton() {
+    if (contentText === "Confirm Submit") {
+      setShowModal(false);
+    } else {
+      if (contentText === "PASS") {
+        setShowModal(false);
+      } else {
+        window.location.href = "/home";
+      }
+    }
+  }
 
   return (
     <IonPage>
@@ -110,7 +162,7 @@ function ChallengePage() {
               <IonBackButton defaultHref="/home"></IonBackButton>
             </IonButtons>
             <IonLabel>
-              Chapter {Chapter?.chapterName} challenge {Challenge?.name}
+              {chapter?.name} - {challenge?.name}
             </IonLabel>
           </>
 
@@ -119,9 +171,10 @@ function ChallengePage() {
             icon={personCircle}
             slot="end"
             color="primary"
-          >
-            <IonLabel className="ion-text-wrap mr-auto">name</IonLabel>
-          </IonIcon>
+          ></IonIcon>
+          <IonLabel className="ion-text-wrap mr-auto" slot="end">
+            {viewer}
+          </IonLabel>
         </IonToolbar>
       </IonHeader>
 
@@ -141,17 +194,6 @@ function ChallengePage() {
 
           <IonRow>
             <IonCol size="4" className="codEditor">
-              {/* <textarea
-                disabled={!!isProcessing}
-                id="editor"
-                onChange={(e) => {
-                  setCode(e.target.value);
-                }}
-                value={code}
-              ></textarea>
-              <IonButton className="btn-reset-code" onClick={resetCode}>
-                Reset Code
-              </IonButton> */}
               <CodeEditorBox
                 isProcessing={isProcessing}
                 code={code}
@@ -180,19 +222,29 @@ function ChallengePage() {
                 outputWrapperRef={outputWrapperRef}
                 outputRef={outputRef}
               />
+              <IonImg
+                className="thisCAT"
+                src={window.location.origin + "/assets/icon/hint_cat.png"}
+                aria-label={challenge?.hint}
+                data-balloon-pos="up"
+              ></IonImg>
             </IonCol>
 
             <IonCol size="4">
-              <div
-                id="target-image"
-                className="target-container d-flex jus-center"
-              >
+              <div id="target-image" className="target-container">
                 <IonImg
                   id="target"
                   ref={targetRef}
-                  src={window.location.origin + Challenge?.image}
+                  //src={challenge?.image}
+                  src={
+                    window.location.origin +
+                    "/assets/images/test" +
+                    challenge?.id +
+                    ".png"
+                  }
                   alt=""
                 />
+                <div className="descriptionText">{challenge?.description}</div>
               </div>
             </IonCol>
           </IonRow>
@@ -208,12 +260,38 @@ function ChallengePage() {
         </IonButton>
       </IonContent>
 
-      {showModal ? (
-        <SubmitBox
-          check={exportAsImage(outputRef.current, Challenge?.name!)}
-          setShowModal={setShowModal}
-        />
-      ) : null}
+      <IonModal
+        className="thisModal"
+        isOpen={showModal}
+        swipeToClose={true}
+        onDidDismiss={() => setCloseModal()}
+      >
+        <div className="modalContent">
+          <IonLabel>{contentText}</IonLabel>
+          <IonButton
+            className="close-button"
+            onClick={() => setShowModal(false)}
+          >
+            <IonIcon slot="icon-only" icon={closeOutline}></IonIcon>
+          </IonButton>
+          <div className="button-bar">
+            <IonButton className="no-button" onClick={() => setCancelButton()}>
+              {noButton}
+            </IonButton>
+            <IonButton
+              className="yes-button"
+              onClick={() =>
+                exportAsImage(
+                  outputRef.current,
+                  "answer_" + challenge?.name!
+                ).then((val) => setSubmitConfirm(val))
+              }
+            >
+              {confirmButton}
+            </IonButton>
+          </div>
+        </div>
+      </IonModal>
     </IonPage>
   );
 }

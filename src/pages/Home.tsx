@@ -6,7 +6,6 @@ import {
   IonIcon,
   IonItem,
   IonLabel,
-  IonList,
   IonPage,
   IonRefresher,
   IonRefresherContent,
@@ -14,29 +13,56 @@ import {
   IonSelectOption,
   IonTitle,
   IonToolbar,
-  useIonViewDidLeave,
   useIonViewWillEnter,
 } from "@ionic/react";
 import "./Home.css";
-import { chapter, getChapters } from "../data/chapter";
+import { getAllChallengeThisChapter, getAllChapter } from "../data/chapterAPI";
 import ChallengeListBox from "../components/ChallengeListBox/ChallengeListBox";
-import { Route } from "react-router";
 import { personCircle } from "ionicons/icons";
+import { getViewerStatus, viewerStatus } from "../data/viewerStatus";
+import React from "react";
 
 const Home: React.FC = () => {
-  const [Chapters, setChapters] = useState<chapter[]>([]);
+  const [allChapter, setAllChapter] = useState<any[]>([]);
+  const [allChallenge, setAllChallenge] = useState<any[]>([]);
+
+  const ThisContent = React.useRef<HTMLIonContentElement>(null);
+  const [ChapterList, setChapterList] = useState<HTMLIonTitleElement[]>([]);
 
   const [viewEntered, setViewEnter] = useState<boolean>();
+  const [viewer, setViewer] = useState<string>();
 
-  var [selectedChapter, setSelectedChapter] = useState<number>(0);
+  var [selectedChapter, setSelectedChapter] = useState<number>();
 
-  useIonViewWillEnter(() => {
-    console.log(Route.length);
-    setChapters(getChapters());
-    setSelectedChapter(0);
+  useIonViewWillEnter(async () => {
+    setViewer(getViewerStatus);
+    // setChapters(getChapters());
+    const chapters: any[] = (await Promise.resolve(getAllChapter())).data;
+    setAllChapter(chapters);
 
+    let challengeList: any[] = [];
+    for (let i = 0; i < chapters.length; i++) {
+      const val = (
+        await Promise.resolve(getAllChallengeThisChapter(chapters[i].id))
+      ).data;
+      challengeList[i] = [...val];
+    }
+    setAllChallenge(challengeList);
+
+    setSelectedChapter(1);
     setViewEnter(true);
   });
+
+  function scrollToView(e: any) {
+    setSelectedChapter(e.detail.value);
+    //console.log(ThisContent);
+    ThisContent.current?.scrollToPoint(
+      0,
+      ChapterList[Number(e.detail.value)]?.offsetTop - 60,
+      1000
+    );
+    //console.log(ChapterList[Number(selectedChapter)]);
+  }
 
   const refresh = (e: CustomEvent) => {
     setTimeout(() => {
@@ -44,28 +70,35 @@ const Home: React.FC = () => {
     }, 1000);
   };
 
-  const chapterSelectionStyle = {
-    display: "flex",
-    justifyContent: "space-between",
-  };
-
   return (
     <IonPage id="home-page">
       <IonHeader>
         <IonToolbar>
-          <IonTitle size="large">CS Project</IonTitle>
+          <IonTitle className="title" slot="start">
+            CSS with CAT
+          </IonTitle>
+          {/* <IonButton routerLink="/admin" slot="start">
+            edit
+          </IonButton> */}
           <IonIcon
             className="mr-auto"
             icon={personCircle}
             slot="end"
             color="primary"
           ></IonIcon>
-          <IonLabel className="ion-text-wrap mr-auto" slot="end">
-            USER
-          </IonLabel>
+          <IonLabel slot="end">{viewer}</IonLabel>
         </IonToolbar>
       </IonHeader>
-      <IonContent fullscreen>
+
+      <IonContent
+        ref={ThisContent}
+        fullscreen
+        overflow-scroll="true"
+        scrollEvents={true}
+        onIonScrollStart={() => {}}
+        onIonScroll={() => {}}
+        onIonScrollEnd={() => {}}
+      >
         <IonRefresher slot="fixed" onIonRefresh={refresh}>
           <IonRefresherContent></IonRefresherContent>
         </IonRefresher>
@@ -76,35 +109,41 @@ const Home: React.FC = () => {
           </IonToolbar>
         </IonHeader>
 
-        <div style={chapterSelectionStyle}>
+        <div className="d-flex">
           <IonItem class="chapterSelection">
             <IonLabel position="floating">Chapter</IonLabel>
             <IonSelect
+              className="dropdownChapter"
               interface="popover"
               value={selectedChapter}
-              onIonChange={(e) => setSelectedChapter(e.detail.value)}
+              onIonChange={(e) => scrollToView(e)}
             >
-              {Chapters.map((c) => (
+              {allChapter.map((c) => (
                 <IonSelectOption key={c.id} value={c.id}>
-                  {c.chapterName}
+                  {c.name}
                 </IonSelectOption>
               ))}
             </IonSelect>
           </IonItem>
           <IonItem>
-            <IonButton>
+            <IonButton routerLink="/gallery">
               <IonLabel>Story Gallery</IonLabel>
             </IonButton>
           </IonItem>
         </div>
 
-        {viewEntered ? (
-          <ChallengeListBox Chapter={Chapters[selectedChapter]} />
-        ) : null}
-
-        {/* <IonButton
-          onClick={(e) => console.log(Chapters[selectedChapter])}
-        ></IonButton> */}
+        {viewEntered
+          ? allChapter.map((chapter) => (
+              <div className="my-16" key={chapter.id}>
+                <IonTitle ref={(ref) => ChapterList?.push(ref!)}>
+                  {chapter.name}
+                </IonTitle>
+                <ChallengeListBox
+                  ChallengeThisChapter={allChallenge[chapter.id - 1]}
+                />
+              </div>
+            ))
+          : null}
       </IonContent>
     </IonPage>
   );

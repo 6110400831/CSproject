@@ -3,11 +3,14 @@ ion-item {
   --inner-padding-end: 0;
 }
 
-.challenge-slides {
-  width: 240px;
+.swiper-wrapper {
   display: flex;
-  justify-content: center;
-  align-items: center;
-  overflow: visible;
-  margin: 0 0;
+}
+
+.swiper-slide {
+  width: initial !important;
+}
+
+.challenge-silde:nth-child(n + 2) {
+  margin-left: 24px;
 }

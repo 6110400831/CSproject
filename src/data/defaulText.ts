@@ -9,7 +9,7 @@ const dCode: defaultCode  = {
     "\n" +
     "body {" +
     "\n" +
-    "background: #fff;" +
+    "margin: 0;" +
     "\n" +
     "}" +
     "\n" +

@@ -4,16 +4,21 @@
 
 .codEditor {
   background-color: #5c5c5c !important;
-}
-
-.codEditor {
   --ion-grid-column-padding: 4px;
+  height: fit-content;
 }
 
 .output-container {
 }
 
 .target-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.descriptionText {
+  margin: 32px;
 }
 
 textarea {
@@ -27,8 +32,103 @@ textarea {
   height: 300px;
 }
 
+.thisModal::part(content) {
+  --width: 350px;
+  --height: 220px;
+  background: white;
+  color: black;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  border-radius: 16px;
+}
+
+.thisModal {
+}
+
+@keyframes animate {
+  from {
+    transform: scale(0.9);
+  }
+  to {
+    transform: scale(1);
+  }
+}
+
+.modalContent {
+  padding: 32px;
+  width: 350px;
+  height: 220px;
+  background: white;
+  color: black;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  animation: animate 0.3s;
+}
+
+.close-button {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  background: inherit;
+  color: white;
+  font-weight: bold;
+  border: none;
+  outline: none;
+  border-radius: 2px;
+}
+
+.button-bar {
+  width: 100%;
+  display: flex;
+  justify-content: space-evenly;
+}
+
 .submit-button {
   position: fixed;
   bottom: 44px;
   right: 84px;
+}
+
+.thisCAT {
+  position: absolute;
+  bottom: -20vh;
+  height: fit-content;
+  width: fit-content;
+
+  animation: catwalk 13s linear infinite;
+}
+
+.thisCAT::part(image){
+    height: 100px;
+  width: auto;
+}
+
+.thisCAT::part(image):hover{
+  height: 103px;
+  width: auto;
+}
+
+@keyframes catwalk {
+  0% {
+    left: 10%;
+  }
+  48% {
+    -webkit-transform: rotateY(0deg); 
+  }
+  50% { 
+    left: calc(100% - 100px);
+    -webkit-transform: rotateY(180deg); 
+  }
+  98% {
+    -webkit-transform: rotateY(180deg); 
+  }
+  100% {
+    left: 10%;    
+     -webkit-transform: rotateY(0deg);
+  }
 }

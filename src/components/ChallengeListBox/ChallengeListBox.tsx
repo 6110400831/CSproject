@@ -1,28 +1,52 @@
-import { IonItem, IonSlides } from "@ionic/react";
+import { IonButton, IonicSlides, IonLabel, IonSlides } from "@ionic/react";
+import { Swiper, SwiperSlide } from "swiper/react";
 import { chapter } from "../../data/chapter";
+import { getAllChallengeThisChapter } from "../../data/chapterAPI";
 import ChallengeBox from "../ChallengeBox/ChallengeBox";
 import "./ChallengeListBox.css";
 
 interface ChallengeListBoxProps {
-  Chapter: chapter;
+  ChallengeThisChapter: any[];
+  adminEntered?: boolean;
 }
 
-const slideConfig = {
-  initialSlide: 0,
-  slidesPerView: 1,
-  grabCursor: true,
-  allowSlideNext: true,
-  allowSlidePrev: true,
-  allowTouchMove: true,
-};
+const slideNumber: Number = Math.floor(Number(window.innerWidth / 300));
 
-const ChallengeListBox: React.FC<ChallengeListBoxProps> = ({ Chapter }) => {
+// const slideConfig = {
+//   initialSlide: 0,
+//   slidesPerView: slideNumber,
+//   grabCursor: true,
+//   allowSlideNext: true,
+//   allowSlidePrev: true,
+//   allowTouchMove: true,
+// };
+
+const ChallengeListBox: React.FC<ChallengeListBoxProps> = ({
+  ChallengeThisChapter,
+  adminEntered,
+}) => {
   return (
-    <IonSlides className="challenge-slides" options={slideConfig}>
-      {Chapter.challengeList.map((c) => (
-        <ChallengeBox key={c.id} Challenge={c} chapterId={Chapter.id} />
-      ))}
-    </IonSlides>
+    <Swiper
+      className="challenge-slides"
+      slidesPerView={Number(slideNumber)}
+      modules={[IonicSlides]}
+    >
+      {ChallengeThisChapter.length === 0 ? (
+        <div>coming soon</div>
+      ) : (
+        ChallengeThisChapter.map((val: any) => (
+          <SwiperSlide className="challenge-silde" key={val.id}>
+            <ChallengeBox Challenge={val} chapterId={val.chapter_id} />
+          </SwiperSlide>
+        ))
+      )}
+
+      {adminEntered ? (
+        <div slot="wrapper-end">
+          <IonButton>EDIT HERE</IonButton>
+        </div>
+      ) : null}
+    </Swiper>
   );
 };
 

@@ -14,28 +14,28 @@ const chapters: chapter[] = [
             {
                 name: 'test11',
                 id: 0,
-                image: "/assets/images/Group 23.png"
+                image: "/assets/images/test1.png"
             },
             {
                 name: 'test2',
                 id: 1,
-                image: "/assets/images/Group 24.png"
+                image: "/assets/images/test2.png"
             },
             {
                 name: 'test3',
                 id: 2,
-                image: "/assets/images/Group 23.png"
+                image: "/assets/images/test1.png"
 
             },
             {
                 name: 'test4',
                 id: 3,
-                image: "/assets/images/Group 24.png"
+                image: "/assets/images/test2.png"
             },
             {
                 name: 'test5',
                 id: 4,
-                image: "/assets/images/Group 23.png"
+                image: "/assets/images/test1.png"
             },
         ],
     },
@@ -46,28 +46,28 @@ const chapters: chapter[] = [
             {
                 name: 'test1',
                 id: 0,
-                image: "/assets/images/Group 23.png"
+                image: "/assets/images/test1.png"
             },
             {
                 name: 'test3',
                 id: 1,
-                image: "/assets/images/Group 24.png"
+                image: "/assets/images/test2.png"
             },
             {
                 name: 'test4',
                 id: 2,
-                image: "/assets/images/Group 23.png"
+                image: "/assets/images/test1.png"
 
             },
             {
                 name: 'test4',
                 id: 3,
-                image: "/assets/images/Group 24.png"
+                image: "/assets/images/test2.png"
             },
             {
                 name: 'test5',
                 id: 4,
-                image: "/assets/images/Group 23.png"
+                image: "/assets/images/test1.png"
             },
         ],
     },
@@ -78,28 +78,28 @@ const chapters: chapter[] = [
             {
                 name: 'test1',
                 id: 0,
-                image: "/assets/images/Group 23.png"
+                image: "/assets/images/test1.png"
             },
             {
                 name: 'test2',
                 id: 1,
-                image: "/assets/images/Group 24.png"
+                image: "/assets/images/test2.png"
             },
             {
                 name: 'test8',
                 id: 2,
-                image: "/assets/images/Group 23.png"
+                image: "/assets/images/test1.png"
 
             },
             {
                 name: 'test7',
                 id: 3,
-                image: "/assets/images/Group 24.png"
+                image: "/assets/images/test2.png"
             },
             {
                 name: 'test5',
                 id: 4,
-                image: "/assets/images/Group 23.png"
+                image: "/assets/images/test1.png"
             },
         ],
     },
@@ -110,28 +110,28 @@ const chapters: chapter[] = [
             {
                 name: 'test1',
                 id: 0,
-                image: "/assets/images/Group 23.png"
+                image: "/assets/images/test1.png"
             },
             {
                 name: 'test2',
                 id: 1,
-                image: "/assets/images/Group 24.png"
+                image: "/assets/images/test2.png"
             },
             {
                 name: 'test9',
                 id: 2,
-                image: "/assets/images/Group 23.png"
+                image: "/assets/images/test1.png"
 
             },
             {
                 name: 'test10',
                 id: 3,
-                image: "/assets/images/Group 24.png"
+                image: "/assets/images/test2.png"
             },
             {
                 name: 'test5',
                 id: 4,
-                image: "/assets/images/Group 23.png"
+                image: "/assets/images/test1.png"
             },
         ],
     },

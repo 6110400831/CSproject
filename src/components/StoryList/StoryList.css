@@ -1,0 +1,15 @@
+.stories {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+#story-image {
+  margin-right: 12px;
+  margin-bottom: 12px;
+}
+
+#story-image::part(image) {
+  background-color: #fff;
+  width: 180px;
+  height: 180px;
+}
