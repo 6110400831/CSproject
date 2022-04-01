@@ -18,13 +18,18 @@ class StoryController extends Controller
     public function createStory(Request $request)
     {
         $json_data = json_decode($request->json);
-        $fileData = $this->uploads($request->file('image'), $json_data->name, 'stories/');
+        $name = $json_data->name;
+        $image = $request->image;
+        $category = 'story';
+        $requestImage = $this->cutBase64($image);
+        $imageName = $name.'.'.$this->getType($image);
+        $path = $this->getPath($category, $name, $imageName);
 
         $story = Story::create([
             'name'        => $json_data->name,
             'description' => $json_data->description,
             'condition'   => $json_data->condition,
-            'image'       => $fileData['path']
+            'image'       => $path
         ]);
 
         if (!$story) {
@@ -35,6 +40,7 @@ class StoryController extends Controller
             ]);
         }
 
+        Storage::disk('public')->put($category.'/'.$name.'/'.$imageName, base64_decode($requestImage));
         return response()->json([
             "success" => true,
             "data"    => $story,
@@ -45,9 +51,13 @@ class StoryController extends Controller
     public function updateStory(Request $request)
     {
         $json_data = json_decode($request->json, true);
-        $fileData = $this->uploads($request->file('image'), $json_data['name'], 'stories/');
-        $image_path = array('image' => $fileData['path']);
-        $json_data = array_merge($json_data, $image_path);
+        $name = $json_data['name'];
+        $image = $request->image;
+        $category = 'story';
+        $requestImage = $this->cutBase64($image);
+        $imageName = $name.'.'.$this->getType($image);
+        $path = $this->getPath($category, $name, $imageName);
+        $json_data = array_merge($json_data, array('image' => $path));
         
         $story = Story::findOrFail($json_data['id']);
         foreach($json_data as $key=>$value){
@@ -62,6 +72,7 @@ class StoryController extends Controller
             ]);
         }
 
+        Storage::disk('public')->put($category.'/'.$name.'/'.$imageName, base64_decode($requestImage));
         return response()->json([
             "success" => true,
             "data"    => $story,

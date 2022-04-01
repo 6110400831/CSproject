@@ -92,6 +92,7 @@ Route::controller(ChallengeController::class)->group(function () {
     Route::get('/getChallenge','getChallenge');
     Route::get('/getChallengeImage','getChallengeImage');
     Route::post('/imageCompare','imageCompare');
+    Route::post('/imageCompare2','imageCompare2');
 
     //auth
     Route::post('/createChallenge','createChallenge');

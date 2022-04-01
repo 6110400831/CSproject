@@ -6,13 +6,9 @@ use Illuminate\Support\Facades\Storage;
 
 trait ImageTrait {
 
-    public function test($image, $name, $category)
+    public function uploads2($category, $name, $imageName, $image)
     {
-        $img = preg_replace('/^data:image\/\w+;base64,/', '', $image);
-        $type = explode(';', $image)[0];
-        $type = explode('/', $type)[1];
-        $imageName = $name.'.'.$type;
-        Storage::disk('public')->put($category.'/'.$name.'/'.$imageName, base64_decode($img));
+        Storage::disk('public')->put($category.'/'.$name.'/'.$imageName, base64_decode($image));
         $path = 'storage/'.$category.'/'.$name.'/'.$imageName;
         return $path;
     }
@@ -35,19 +31,28 @@ trait ImageTrait {
         }
     }
     
-    public function compareImage($storageImageName, $storageImagePath, $requestImage)
+    public function compareImage($storageImagePath, $requestImage)
     {
         $storageImage = file_get_contents($storageImagePath);
-        $requestImage = file_get_contents($requestImage);
         $storageImage_base64 = base64_encode($storageImage);
-        $requestImage_base64 = base64_encode($requestImage);
 
-        return $storageImage_base64 == $requestImage_base64;
+        return $storageImage_base64 == $requestImage;
     }
-
-    public function imageType($image)
+    
+    public function getPath($category, $name, $imageName)
     {
-        $img = preg_replace('/^data:image\/\w+;base64,/', '', $image);
+        $path = 'storage/'.$category.'/'.$name.'/'.$imageName;
+        return $path;
+    }
+    
+    public function cutBase64($image)
+    {
+        $base64_image = preg_replace('/^data:image\/\w+;base64,/', '', $image);
+        return $base64_image;
+    }
+    
+    public function getType($image)
+    {
         $type = explode(';', $image)[0];
         $type = explode('/', $type)[1];
         return $type;

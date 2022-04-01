@@ -14,21 +14,16 @@ class ChallengeController extends Controller
 {
     use ImageTrait;
 
-    public function test(Request $request)
+    public function createChallenge(Request $request)
     {
         $json_data = json_decode($request->json);
         $name = $json_data->name;
         $image = $request->image;
-        // $img = preg_replace('/^data:image\/\w+;base64,/', '', $image);
-        // $type = explode(';', $image)[0];
-        // $type = explode('/', $type)[1];
-        // $imageName = $name.'.'.$type;
-        // Storage::disk('public')->put('challenge/'.$name.'/'.$imageName, base64_decode($img));
-        // $path = 'storage/challenge/'.$name.'/'.$imageName;
-        // $path = $this->test($image, $name, 'challenges/');
-        $path = $this->test($image, $name, 'challenges/');
-        dd($path);
-
+        $category = 'challenges';
+        $requestImage = $this->cutBase64($image);
+        $imageName = $name.'.'.$this->getType($image);
+        $path = $this->getPath($category, $name, $imageName);
+        
         $challenge = Challenge::create([
             'name'        => $json_data->name,
             'description' => $json_data->description,
@@ -44,35 +39,8 @@ class ChallengeController extends Controller
                 "message" => "Challenge create failed."
             ]);
         }
-
-        return response()->json([
-            "success" => true,
-            "data"    => $challenge,
-            "message" => "Challenge create succesfully."
-        ]);
-    }
-    
-    public function createChallenge(Request $request)
-    {
-        $json_data = json_decode($request->json);
-        $fileData = $this->uploads($request->file('image'), $json_data->name, 'challenges/');
-
-        $challenge = Challenge::create([
-            'name'        => $json_data->name,
-            'description' => $json_data->description,
-            'hint'        => $json_data->hint,
-            'image'       => $fileData['path'],
-            'chapter_id'  => $json_data->chapter_id
-        ]);
-
-        if (!$challenge) {
-            return response()->json([
-                "success" => false,
-                "data"    => $challenge,
-                "message" => "Challenge create failed."
-            ]);
-        }
-
+        
+        Storage::disk('public')->put($category.'/'.$name.'/'.$imageName, base64_decode($requestImage));
         return response()->json([
             "success" => true,
             "data"    => $challenge,
@@ -83,9 +51,13 @@ class ChallengeController extends Controller
     public function updateChallenge(Request $request)
     {
         $json_data = json_decode($request->json, true);
-        $fileData = $this->uploads($request->file('image'), $json_data['name'], 'challenges/');
-        $image_path = array('image' => $fileData['path']);
-        $json_data = array_merge($json_data, $image_path);
+        $name = $json_data['name'];
+        $image = $request->image;
+        $category = 'challenges';
+        $requestImage = $this->cutBase64($image);
+        $imageName = $name.'.'.$this->getType($image);
+        $path = $this->getPath($category, $name, $imageName);
+        $json_data = array_merge($json_data, array('image' => $path));
 
         $challenge = Challenge::findOrFail($json_data['id']);
         foreach($json_data as $key=>$value){
@@ -100,6 +72,7 @@ class ChallengeController extends Controller
             ]);
         }
 
+        Storage::disk('public')->put($category.'/'.$name.'/'.$imageName, base64_decode($requestImage));
         return response()->json([
             "success" => true,
             "data"    => $challenge,
@@ -110,11 +83,10 @@ class ChallengeController extends Controller
     public function imageCompare(Request $request)
     {
         $challenge = Challenge::findOrFail($request->id);
-
         $storageImageName = $challenge->name;
         $storageImagePath = $challenge->image;
-        $requestImage = $request->file('image');
-        $compareResult = $this->compareImage($storageImageName, $storageImagePath, $requestImage);
+        $requestImage = $this->cutBase64($request->image);
+        $compareResult = $this->compareImage($storageImagePath, $requestImage);
 
         if (!$compareResult) {
             return response()->json([
@@ -123,6 +95,7 @@ class ChallengeController extends Controller
                 "message" => "False answer."
             ]);
         }
+
         return response()->json([
             "status" => true,
             "data"    => $compareResult,
