@@ -2,7 +2,20 @@
 
 namespace App\Traits;
 
+use Illuminate\Support\Facades\Storage;
+
 trait ImageTrait {
+
+    public function test($image, $name, $category)
+    {
+        $img = preg_replace('/^data:image\/\w+;base64,/', '', $image);
+        $type = explode(';', $image)[0];
+        $type = explode('/', $type)[1];
+        $imageName = $name.'.'.$type;
+        Storage::disk('public')->put($category.'/'.$name.'/'.$imageName, base64_decode($img));
+        $path = 'storage/'.$category.'/'.$name.'/'.$imageName;
+        return $path;
+    }
 
     public function uploads($image, $name, $type)
     {
@@ -30,6 +43,14 @@ trait ImageTrait {
         $requestImage_base64 = base64_encode($requestImage);
 
         return $storageImage_base64 == $requestImage_base64;
+    }
+
+    public function imageType($image)
+    {
+        $img = preg_replace('/^data:image\/\w+;base64,/', '', $image);
+        $type = explode(';', $image)[0];
+        $type = explode('/', $type)[1];
+        return $type;
     }
 
     public function imageSize($image, $precision = 2)

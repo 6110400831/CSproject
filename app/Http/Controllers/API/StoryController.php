@@ -18,7 +18,7 @@ class StoryController extends Controller
     public function createStory(Request $request)
     {
         $json_data = json_decode($request->json);
-        $fileData = $this->uploads($request->file('image'), $json_data->name, 'story/');
+        $fileData = $this->uploads($request->file('image'), $json_data->name, 'stories/');
 
         $story = Story::create([
             'name'        => $json_data->name,
@@ -45,7 +45,7 @@ class StoryController extends Controller
     public function updateStory(Request $request)
     {
         $json_data = json_decode($request->json, true);
-        $fileData = $this->uploads($request->file('image'), $json_data['name'], 'story/');
+        $fileData = $this->uploads($request->file('image'), $json_data['name'], 'stories/');
         $image_path = array('image' => $fileData['path']);
         $json_data = array_merge($json_data, $image_path);
         
