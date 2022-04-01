@@ -30,7 +30,7 @@ let myTheme = EditorView.theme(
       color: "#ddd",
       border: "none",
     },
-    ".cm-scroller": { overflow: "hidden" },
+    ".cm-scroller": {},
   },
   { dark: true }
 );
@@ -66,7 +66,7 @@ const CodeEditorBox: React.FC<codeEditorBoxProps> = ({
         onChange={(e) => {
           setCode(e);
         }}
-        extensions={myTheme}
+        extensions={[myTheme]}
       />
       {/* <textarea
         disabled={!!isProcessing}

@@ -68,7 +68,6 @@ function ChallengePage() {
       scale: 1,
       logging: false,
     });
-    // document.getElementById("target-image")!.appendChild(canvas);
     const outputImage = canvas.toDataURL("image/png", 1.0);
     const targetImage = await (
       await html2canvas(targetRef.current!, {
@@ -79,7 +78,8 @@ function ChallengePage() {
       })
     ).toDataURL("image/png", 1.0);
 
-    // await downloadImage(outputImage, imageFileName);
+    //document.getElementById("target-image")!.appendChild(canvas);
+    await downloadImage(outputImage, imageFileName);
 
     if (outputImage === targetImage) {
       return true;
@@ -88,18 +88,18 @@ function ChallengePage() {
     }
   }
 
-  // const downloadImage = async (blob: any, fileName: string) => {
-  //   const fakeLink = await window.document.createElement("a");
-  //   fakeLink.setAttribute("style", "display:none;");
-  //   fakeLink.download = fileName;
-  //   fakeLink.href = blob;
+  const downloadImage = async (blob: any, fileName: string) => {
+    const fakeLink = await window.document.createElement("a");
+    fakeLink.setAttribute("style", "display:none;");
+    fakeLink.download = fileName;
+    fakeLink.href = blob;
 
-  //   document.body.appendChild(fakeLink);
-  //   fakeLink.click();
-  //   document.body.removeChild(fakeLink);
+    document.body.appendChild(fakeLink);
+    fakeLink.click();
+    document.body.removeChild(fakeLink);
 
-  //   fakeLink.remove();
-  // };
+    fakeLink.remove();
+  };
 
   return (
     <IonPage>

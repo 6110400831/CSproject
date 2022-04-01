@@ -22,7 +22,8 @@ const OutputBox: React.FC<OutputBoxProps> = ({
         height="300px"
         title="output"
         srcDoc={code}
-        sandbox=""
+        scrolling="no"
+        sandbox="allow-same-origin"
       ></iframe>
     </div>
   );
