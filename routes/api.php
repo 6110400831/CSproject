@@ -92,7 +92,6 @@ Route::controller(ChallengeController::class)->group(function () {
     Route::get('/getChallenge','getChallenge');
     Route::get('/getChallengeImage','getChallengeImage');
     Route::post('/imageCompare','imageCompare');
-    Route::post('/imageCompare2','imageCompare2');
 
     //auth
     Route::post('/createChallenge','createChallenge');
@@ -103,9 +102,6 @@ Route::controller(ChallengeController::class)->group(function () {
     Route::post('/deletedChallengeRestore','deletedChallengeRestore');
     Route::delete('/permanentDeleteChallenges','permanentDeleteChallenges');
     Route::delete('/permanentDeleteChallenge','permanentDeleteChallenge');
-
-    //test
-    Route::post('/test','test');
 });
 
 Route::controller(StoryController::class)->group(function () {

@@ -20,7 +20,7 @@ class StoryController extends Controller
         $json_data = json_decode($request->json);
         $name = $json_data->name;
         $image = $request->image;
-        $category = 'story';
+        $category = 'stories';
         $requestImage = $this->cutBase64($image);
         $imageName = $name.'.'.$this->getType($image);
         $path = $this->getPath($category, $name, $imageName);
@@ -53,7 +53,7 @@ class StoryController extends Controller
         $json_data = json_decode($request->json, true);
         $name = $json_data['name'];
         $image = $request->image;
-        $category = 'story';
+        $category = 'stories';
         $requestImage = $this->cutBase64($image);
         $imageName = $name.'.'.$this->getType($image);
         $path = $this->getPath($category, $name, $imageName);
