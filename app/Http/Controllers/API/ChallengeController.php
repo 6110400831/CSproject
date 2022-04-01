@@ -78,8 +78,8 @@ class ChallengeController extends Controller
 
         $storageImageName = $challenge->name;
         $storageImagePath = $challenge->image;
-        $requestImage   = $request->file('image');
-        $compareResult  = $this->compareImage($storageImageName, $storageImagePath, $requestImage);
+        // $requestImage   = $request->file('image');
+        $compareResult  = $this->compareImage($storageImageName, $storageImagePath, $request->image);
 
         if (!$compareResult) {
             return response()->json([
