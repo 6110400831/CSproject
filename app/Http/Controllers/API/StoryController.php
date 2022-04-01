@@ -17,8 +17,7 @@ class StoryController extends Controller
 
     public function createStory(Request $request)
     {
-        $json_data = json_decode($request->json);
-        $name = $json_data->name;
+        $name = $request->name;
         $image = $request->image;
         $category = 'stories';
         $requestImage = $this->cutBase64($image);
@@ -26,9 +25,9 @@ class StoryController extends Controller
         $path = $this->getPath($category, $name, $imageName);
 
         $story = Story::create([
-            'name'        => $json_data->name,
-            'description' => $json_data->description,
-            'condition'   => $json_data->condition,
+            'name'        => $request->name,
+            'description' => $request->description,
+            'condition'   => $request->condition,
             'image'       => $path
         ]);
 
@@ -50,18 +49,21 @@ class StoryController extends Controller
     
     public function updateStory(Request $request)
     {
-        $json_data = json_decode($request->json, true);
-        $name = $json_data['name'];
+        $name = $request->name;
         $image = $request->image;
         $category = 'stories';
         $requestImage = $this->cutBase64($image);
         $imageName = $name.'.'.$this->getType($image);
         $path = $this->getPath($category, $name, $imageName);
-        $json_data = array_merge($json_data, array('image' => $path));
         
-        $story = Story::findOrFail($json_data['id']);
-        foreach($json_data as $key=>$value){
-            $story->update([$key=>$value]);
+        $story = Story::findOrFail($request['id']);
+        foreach($request->all() as $key=>$value){
+            if ($key == 'image') {
+                $story->update([$key => $path]);
+            }
+            else {
+                $story->update([$key => $value]);
+            }
         }
 
         if (!$story) {

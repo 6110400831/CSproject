@@ -16,8 +16,7 @@ class ChallengeController extends Controller
 
     public function createChallenge(Request $request)
     {
-        $json_data = json_decode($request->json);
-        $name = $json_data->name;
+        $name = $request->name;
         $image = $request->image;
         $category = 'challenges';
         $requestImage = $this->cutBase64($image);
@@ -25,11 +24,11 @@ class ChallengeController extends Controller
         $path = $this->getPath($category, $name, $imageName);
         
         $challenge = Challenge::create([
-            'name'        => $json_data->name,
-            'description' => $json_data->description,
-            'hint'        => $json_data->hint,
+            'name'        => $request->name,
+            'description' => $request->description,
+            'hint'        => $request->hint,
             'image'       => $path,
-            'chapter_id'  => $json_data->chapter_id
+            'chapter_id'  => $request->chapter_id
         ]);
 
         if (!$challenge) {
@@ -50,18 +49,21 @@ class ChallengeController extends Controller
     
     public function updateChallenge(Request $request)
     {
-        $json_data = json_decode($request->json, true);
-        $name = $json_data['name'];
+        $name = $request->name;
         $image = $request->image;
         $category = 'challenges';
         $requestImage = $this->cutBase64($image);
         $imageName = $name.'.'.$this->getType($image);
         $path = $this->getPath($category, $name, $imageName);
-        $json_data = array_merge($json_data, array('image' => $path));
 
-        $challenge = Challenge::findOrFail($json_data['id']);
-        foreach($json_data as $key=>$value){
-            $challenge->update([$key=>$value]);
+        $challenge = Challenge::findOrFail($request->id);
+        foreach($request->all() as $key=>$value){
+            if ($key == 'image') {
+                $challenge->update([$key => $path]);
+            }
+            else {
+                $challenge->update([$key => $value]);
+            }
         }
 
         if (!$challenge) {
@@ -83,7 +85,6 @@ class ChallengeController extends Controller
     public function imageCompare(Request $request)
     {
         $challenge = Challenge::findOrFail($request->id);
-        $storageImageName = $challenge->name;
         $storageImagePath = $challenge->image;
         $requestImage = $this->cutBase64($request->image);
         $compareResult = $this->compareImage($storageImagePath, $requestImage);
