@@ -24,7 +24,7 @@ trait ImageTrait {
     
     public function compareImage($storageImageName, $storageImagePath, $requestImage)
     {
-        $path = storage_path().'/app/public/'.$storageImagePath;
+        $path = asset($storageImagePath);
         
         $storageImage = file_get_contents($path);
         $requestImage = file_get_contents($requestImage);
