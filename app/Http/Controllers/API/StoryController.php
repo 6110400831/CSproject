@@ -44,20 +44,15 @@ class StoryController extends Controller
     
     public function updateStory(Request $request)
     {
-        $json_data = json_decode($request->json);
-        $fileData = $this->uploads($request->file('image'), $json_data->name, 'story/');
+        $json_data = json_decode($request->json, true);
+        $fileData = $this->uploads($request->file('image'), $json_data['name'], 'story/');
+        $image_path = array('image' => $fileData['path']);
+        $json_data = array_merge($json_data, $image_path);
         
-        $story = Story::updateOrCreate(
-            [
-                'id'          => $request->id
-            ],
-            [
-                'name'        => $json_data->name,
-                'description' => $json_data->description,
-                'condition'   => $json_data->condition,
-                'image'       => $fileData['path']
-            ]
-        );
+        $story = Story::findOrFail($json_data['id']);
+        foreach($json_data as $key=>$value){
+            $story->update([$key=>$value]);
+        }
 
         if (!$story) {
             return response()->json([

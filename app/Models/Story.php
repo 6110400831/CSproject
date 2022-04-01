@@ -11,6 +11,7 @@ class Story extends Model
     use HasFactory;
     use SoftDeletes;
 
+    protected $primaryKey = 'id';
     protected $dates = ['deleted_at'];
     protected $fillable = ['id', 'name', 'description', 'condition', 'image'];
 

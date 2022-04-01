@@ -43,21 +43,15 @@ class ChallengeController extends Controller
     
     public function updateChallenge(Request $request)
     {
-        $json_data = json_decode($request->json);
-        $fileData = $this->uploads($request->file('image'), $json_data->name, 'challenge/');
+        $json_data = json_decode($request->json, true);
+        $fileData = $this->uploads($request->file('image'), $json_data['name'], 'challenge/');
+        $image_path = array('image' => $fileData['path']);
+        $json_data = array_merge($json_data, $image_path);
 
-        $challenge = Challenge::updateOrCreate(
-            [
-                'id'          => $request->id
-            ],
-            [
-                'name'        => $json_data->name,
-                'description' => $json_data->description,
-                'hint'        => $json_data->hint,
-                'image'       => $fileData['path'],
-                'chapter_id'  => $json_data->chapter_id
-            ]
-        );
+        $challenge = Challenge::findOrFail($json_data['id']);
+        foreach($json_data as $key=>$value){
+            $challenge->update([$key=>$value]);
+        }
 
         if (!$challenge) {
             return response()->json([
@@ -68,6 +62,8 @@ class ChallengeController extends Controller
         }
 
         return response()->json([
+            "success" => true,
+            "data"    => $challenge,
             "message" => "Challenge successfully updated."
         ]);
     }
@@ -78,8 +74,8 @@ class ChallengeController extends Controller
 
         $storageImageName = $challenge->name;
         $storageImagePath = $challenge->image;
-        // $requestImage   = $request->file('image');
-        $compareResult  = $this->compareImage($storageImageName, $storageImagePath, $request->image);
+        $requestImage = $request->file('image');
+        $compareResult = $this->compareImage($storageImageName, $storageImagePath, $requestImage);
 
         if (!$compareResult) {
             return response()->json([

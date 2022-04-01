@@ -33,15 +33,10 @@ class ChapterController extends Controller
     
     public function updateChapter(Request $request)
     {
-        $chapter = Chapter::updateOrCreate(
-            [
-                'id'          => $request->id
-            ],
-            [
-                'name'        => $request->name,
-                'description' => $request->description
-            ]
-        );
+        $chapter = Chapter::findOrFail($request->id);
+        foreach($request->all() as $key=>$value){
+            $chapter->update([$key=>$value]);
+        }
 
         if (!$chapter) {
             return response()->json([
