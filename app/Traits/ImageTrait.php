@@ -6,6 +6,24 @@ use Illuminate\Support\Facades\Storage;
 
 trait ImageTrait {
     
+    public function uploads($image, $name, $type)
+    {
+        if( $image ) {
+            
+            $image_type = $image->getClientOriginalExtension();
+            $image_name = $name.'.'.$image_type;
+            $image_path = 'storage/'.$image->storeAs($type.$name, $image_name, 'public');
+            $image_size = $this->imageSize($image);
+
+            return $image = [
+                'name' => $image_name,
+                'type' => $image_type,
+                'path' => $image_path,
+                'size' => $image_size
+            ];
+        }
+    }
+    
     public function compareImage($storageImagePath, $requestImage)
     {
         $storageImage = file_get_contents($storageImagePath);

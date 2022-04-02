@@ -17,18 +17,14 @@ class StoryController extends Controller
 
     public function createStory(Request $request)
     {
-        $name = $request->name;
-        $image = $request->image;
-        $category = 'stories';
-        $requestImage = $this->cutBase64($image);
-        $imageName = $name.'.'.$this->getType($image);
-        $path = $this->getPath($category, $name, $imageName);
+        $json_data = json_decode($request->json);
+        $fileData = $this->uploads($request->file('image'), $json_data->name, 'story/');
 
         $story = Story::create([
-            'name'        => $request->name,
-            'description' => $request->description,
-            'condition'   => $request->condition,
-            'image'       => $path
+            'name'        => $json_data->name,
+            'description' => $json_data->description,
+            'condition'   => $json_data->condition,
+            'image'       => $fileData['path']
         ]);
 
         if (!$story) {
@@ -39,7 +35,6 @@ class StoryController extends Controller
             ]);
         }
 
-        Storage::disk('public')->put($category.'/'.$name.'/'.$imageName, base64_decode($requestImage));
         return response()->json([
             "success" => true,
             "data"    => $story,
@@ -49,21 +44,14 @@ class StoryController extends Controller
     
     public function updateStory(Request $request)
     {
-        $name = $request->name;
-        $image = $request->image;
-        $category = 'stories';
-        $requestImage = $this->cutBase64($image);
-        $imageName = $name.'.'.$this->getType($image);
-        $path = $this->getPath($category, $name, $imageName);
+        $json_data = json_decode($request->json, true);
+        $fileData = $this->uploads($request->file('image'), $json_data['name'], 'story/');
+        $image_path = array('image' => $fileData['path']);
+        $json_data = array_merge($json_data, $image_path);
         
-        $story = Story::findOrFail($request['id']);
-        foreach($request->all() as $key=>$value){
-            if ($key == 'image') {
-                $story->update([$key => $path]);
-            }
-            else {
-                $story->update([$key => $value]);
-            }
+        $story = Story::findOrFail($json_data['id']);
+        foreach($json_data as $key=>$value){
+            $story->update([$key=>$value]);
         }
 
         if (!$story) {
@@ -74,7 +62,6 @@ class StoryController extends Controller
             ]);
         }
 
-        Storage::disk('public')->put($category.'/'.$name.'/'.$imageName, base64_decode($requestImage));
         return response()->json([
             "success" => true,
             "data"    => $story,
