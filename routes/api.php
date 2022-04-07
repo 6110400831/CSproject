@@ -22,11 +22,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::group(['middleware' => ['auth:sanctum']], function () {
-
-    Route::controller(ChapterController::class)->group(function () {
-        Route::post('/logout', 'logout');
-    });
+Route::group(['middleware' => ['auth:sanctum', 'user-access:admin']], function () {
 
     // Route::controller(ChapterController::class)->group(function () {
     //     Route::post('/createChapter','createChapter');
@@ -65,6 +61,7 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
 Route::controller(AuthController::class)->group(function () {
     Route::post('/register','register');
     Route::post('/login','login');
+    Route::post('/logout', 'logout')->middleware('auth:sanctum');
 });
 
 Route::controller(ChapterController::class)->group(function () {
