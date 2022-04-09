@@ -6,22 +6,22 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class Chapter extends Model
+class UserProgress extends Model
 {
-    use HasFactory;
     use SoftDeletes;
+    use HasFactory;
 
     protected $primaryKey = 'id';
     protected $dates = ['deleted_at'];
-    
+
     protected $fillable = [
         'id',
         'name',
-        'description'
+        'email',
+        'finished'
     ];
 
-    public function challenges()
-    {
-        return $this->hasMany(Challenge::class);
-    }
+    protected $casts = [
+        'finished' => 'array',
+    ];
 }

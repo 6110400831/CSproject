@@ -13,7 +13,14 @@ class Story extends Model
 
     protected $primaryKey = 'id';
     protected $dates = ['deleted_at'];
-    protected $fillable = ['id', 'name', 'description', 'condition', 'image'];
+    
+    protected $fillable = [
+        'id',
+        'name',
+        'description',
+        'condition',
+        'image'
+    ];
 
     public function getImage()
     {

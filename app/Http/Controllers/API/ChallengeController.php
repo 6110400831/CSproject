@@ -7,12 +7,13 @@ use App\Http\Resources\ChallengeCollection;
 use App\Http\Resources\ChallengeResource;
 use App\Models\Challenge;
 use App\Traits\ImageTrait;
+use App\Traits\ProgressTrait;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
 class ChallengeController extends Controller
 {
-    use ImageTrait;
+    use ImageTrait, ProgressTrait;
 
     public function createChallenge(Request $request)
     {
@@ -88,18 +89,24 @@ class ChallengeController extends Controller
         $storageImagePath = $challenge->image;
         $requestImage = $this->cutBase64($request->image);
         $compareResult = $this->compareImage($storageImagePath, $requestImage);
+        
+        $data = new \stdClass;
+        $data->result = $compareResult;
+        $data->finished = $request->finished;
 
         if (!$compareResult) {
             return response()->json([
                 "status" => false,
-                "data"    => $compareResult,
+                "data"    => $data,
                 "message" => "False answer."
             ]);
         }
 
+        $data->finished = $this->updateProgress($request->user('sanctum'), $request->finished, $request->id);
+        
         return response()->json([
             "status" => true,
-            "data"    => $compareResult,
+            "data"    => $data,
             "message" => "Correct answer."
         ]);
     }

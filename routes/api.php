@@ -6,6 +6,7 @@ use App\Http\Controllers\API\AuthController;
 use App\Http\Controllers\API\ChapterController;
 use App\Http\Controllers\API\ChallengeController;
 use App\Http\Controllers\API\StoryController;
+use App\Http\Controllers\API\UserProgressController;
 
 /*
 |--------------------------------------------------------------------------
