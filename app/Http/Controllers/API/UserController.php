@@ -59,7 +59,7 @@ class UserController extends Controller
 
     public function getCurrentUserProgress(Request $request)
     {
-        return $request->user()->progress;
+        return $request->user()->progress->finished;
     }
 
     public function getAllUser()
