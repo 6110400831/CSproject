@@ -3,10 +3,10 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\API\AuthController;
+use App\Http\Controllers\API\UserController;
 use App\Http\Controllers\API\ChapterController;
 use App\Http\Controllers\API\ChallengeController;
 use App\Http\Controllers\API\StoryController;
-use App\Http\Controllers\API\UserProgressController;
 
 /*
 |--------------------------------------------------------------------------
@@ -24,6 +24,14 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 
 Route::group(['middleware' => ['auth:sanctum', 'user-access:admin']], function () {
+
+    // Route::controller(UserController::class)->group(function () {
+    //     Route::get('/getDeletedStories','getDeletedStories');
+    //     Route::post('/deletedStoriesRestore','deletedStoriesRestore');
+    //     Route::post('/deletedStoryRestore','deletedStoryRestore');
+    //     Route::delete('/permanentDeleteStories','permanentDeleteStories');
+    //     Route::delete('/permanentDeleteStory','permanentDeleteStory');
+    // });
 
     // Route::controller(ChapterController::class)->group(function () {
     //     Route::post('/createChapter','createChapter');
@@ -59,10 +67,23 @@ Route::group(['middleware' => ['auth:sanctum', 'user-access:admin']], function (
     // });
 });
 
+Route::group(['middleware' => ['auth:sanctum']], function () {
+    Route::controller(AuthController::class)->group(function () {
+        Route::post('/logout', 'logout');
+    });
+
+    Route::controller(UserController::class)->group(function () {
+        Route::get('/getAllUser','getAllUser');
+        Route::get('/getUser','getUser');
+        Route::get('/getUserProgress', 'getUserProgress');
+        Route::post('/updateUser','updateUser');
+        Route::post('/deleteUser','deleteUser');
+    });
+});
+
 Route::controller(AuthController::class)->group(function () {
     Route::post('/register','register');
     Route::post('/login','login');
-    Route::post('/logout', 'logout')->middleware('auth:sanctum');
 });
 
 Route::controller(ChapterController::class)->group(function () {

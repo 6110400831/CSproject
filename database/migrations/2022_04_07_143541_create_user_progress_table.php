@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('name');
             $table->string('email')->unique();
             $table->json('finished');
+            $table->bigInteger('user_id');
             $table->softDeletes();
             $table->timestamps();
         });

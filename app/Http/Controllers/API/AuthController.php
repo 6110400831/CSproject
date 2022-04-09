@@ -4,6 +4,7 @@ namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use App\Models\UserProgress;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 
@@ -22,6 +23,13 @@ class AuthController extends Controller
             'role'     => $fields['role'],
             'email'    => $fields['email'],
             'password' => bcrypt($fields['password'])
+        ]);
+
+        $userProgress = UserProgress::create([
+            'name'     => $fields['name'],
+            'email'    => $fields['email'],
+            'finished' => [],
+            'user_id' => $user->id,
         ]);
 
         $token = $user->createToken('myapptoken')->plainTextToken;

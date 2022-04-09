@@ -4,7 +4,6 @@ namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
 use App\Models\Chapter;
-use App\Models\Challenge;
 use Illuminate\Http\Request;
 
 class ChapterController extends Controller
