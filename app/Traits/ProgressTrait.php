@@ -26,4 +26,16 @@ trait ProgressTrait {
 
         return $new_finished;
     }
+
+    public function getProgressCount($user, $finished)
+    {
+        if ($user != null) {
+            $count = sizeof($user->progress->finished);
+        }
+        else {
+            $count = sizeof($finished);
+        }
+
+        return $count;
+    }
 }

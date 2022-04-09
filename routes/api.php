@@ -84,7 +84,6 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::controller(UserController::class)->group(function () {
         Route::get('/getCurrentUser','getCurrentUser');
         Route::get('/getCurrentUserProgress','getCurrentUserProgress');
-        Route::get('/getCurrentUserProgressCount','getCurrentUserProgressCount');
         Route::post('/updateCurrentUser','updateCurrentUser');
         Route::post('/deleteCurrentUser','deleteCurrentUser');
     });
@@ -93,6 +92,10 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
 Route::controller(AuthController::class)->group(function () {
     Route::post('/register','register');
     Route::post('/login','login');
+});
+
+Route::controller(UserController::class)->group(function () {
+    Route::get('/getCurrentProgressCount','getCurrentProgressCount');
 });
 
 Route::controller(ChapterController::class)->group(function () {

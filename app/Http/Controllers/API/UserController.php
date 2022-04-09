@@ -4,10 +4,13 @@ namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use App\Traits\ProgressTrait;
 use Illuminate\Http\Request;
 
 class UserController extends Controller
 {
+    use ProgressTrait;
+
     public function updateCurrentUser(Request $request)
     {
         $user = $request->user();
@@ -61,10 +64,11 @@ class UserController extends Controller
     {
         return $request->user()->progress->finished;
     }
-    
-    public function getCurrentUserProgressCount(Request $request)
+
+    public function getCurrentProgressCount(Request $request)
     {
-        return sizeof($request->user()->progress->finished);
+        $count = $this->getProgressCount($request->user('sanctum'), $request->finished);
+        return $count;
     }
 
     public function getAllUser()
