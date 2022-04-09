@@ -61,6 +61,11 @@ class UserController extends Controller
     {
         return $request->user()->progress->finished;
     }
+    
+    public function getCurrentUserProgressCount(Request $request)
+    {
+        return sizeof($request->user()->progress->finished);
+    }
 
     public function getAllUser()
     {

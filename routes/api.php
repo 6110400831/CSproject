@@ -84,6 +84,7 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::controller(UserController::class)->group(function () {
         Route::get('/getCurrentUser','getCurrentUser');
         Route::get('/getCurrentUserProgress','getCurrentUserProgress');
+        Route::get('/getCurrentUserProgressCount','getCurrentUserProgressCount');
         Route::post('/updateCurrentUser','updateCurrentUser');
         Route::post('/deleteCurrentUser','deleteCurrentUser');
     });
