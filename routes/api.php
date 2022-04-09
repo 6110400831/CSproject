@@ -25,46 +25,55 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 Route::group(['middleware' => ['auth:sanctum', 'user-access:admin']], function () {
 
-    // Route::controller(UserController::class)->group(function () {
-    //     Route::get('/getDeletedStories','getDeletedStories');
-    //     Route::post('/deletedStoriesRestore','deletedStoriesRestore');
-    //     Route::post('/deletedStoryRestore','deletedStoryRestore');
-    //     Route::delete('/permanentDeleteStories','permanentDeleteStories');
-    //     Route::delete('/permanentDeleteStory','permanentDeleteStory');
-    // });
+    Route::controller(UserController::class)->group(function () {
+        Route::get('/getAllUser','getAllUser');
+        Route::get('/getUser','getUser');
+        Route::get('/getUserProgress', 'getUserProgress');
+        Route::post('/updateUser','updateUser');
+        Route::post('/deleteUser','deleteUser');
+        Route::get('/getDeletedUsers','getDeletedUsers');
+        Route::post('/getDeletedUser','getDeletedUser');
+        Route::post('/deletedUsersRestore','deletedUsersRestore');
+        Route::post('/deletedUserRestore','deletedUserRestore');
+        Route::delete('/permanentDeleteUsers','permanentDeleteUsers');
+        Route::delete('/permanentDeleteUser','permanentDeleteUser');
+    });
 
-    // Route::controller(ChapterController::class)->group(function () {
-    //     Route::post('/createChapter','createChapter');
-    //     Route::post('/updateChapter','updateChapter');
-    //     Route::delete('/deleteChapter','deleteChapter');
-    //     Route::get('/getDeletedChapters','getDeletedChapters');
-    //     Route::post('/deletedChaptersRestore','deletedChaptersRestore');
-    //     Route::post('/deletedChapterRestore','deletedChapterRestore');
-    //     Route::delete('/permanentDeleteChapters','permanentDeleteChapters');
-    //     Route::delete('/permanentDeleteChapter','permanentDeleteChapter');
-    // });
+    Route::controller(ChapterController::class)->group(function () {
+        Route::post('/createChapter','createChapter');
+        Route::post('/updateChapter','updateChapter');
+        Route::delete('/deleteChapter','deleteChapter');
+        Route::get('/getDeletedChapters','getDeletedChapters');
+        Route::get('/getDeletedChapter','getDeletedChapter');
+        Route::post('/deletedChaptersRestore','deletedChaptersRestore');
+        Route::post('/deletedChapterRestore','deletedChapterRestore');
+        Route::delete('/permanentDeleteChapters','permanentDeleteChapters');
+        Route::delete('/permanentDeleteChapter','permanentDeleteChapter');
+    });
 
-    // Route::controller(ChallengeController::class)->group(function () {
-    //     Route::post('/createChallenge','createChallenge');
-    //     Route::post('/updateChallenge','updateChallenge');
-    //     Route::delete('/deleteChallenge','deleteChallenge');
-    //     Route::get('/getDeletedChallenges','getDeletedChallenges');
-    //     Route::post('/deletedChallengesRestore','deletedChallengesRestore');
-    //     Route::post('/deletedChallengeRestore','deletedChallengeRestore');
-    //     Route::delete('/permanentDeleteChallenges','permanentDeleteChallenges');
-    //     Route::delete('/permanentDeleteChallenge','permanentDeleteChallenge');
-    // });
+    Route::controller(ChallengeController::class)->group(function () {
+        Route::post('/createChallenge','createChallenge');
+        Route::post('/updateChallenge','updateChallenge');
+        Route::delete('/deleteChallenge','deleteChallenge');
+        Route::get('/getDeletedChallenges','getDeletedChallenges');
+        Route::get('/getDeletedChallenge','getDeletedChallenge');
+        Route::post('/deletedChallengesRestore','deletedChallengesRestore');
+        Route::post('/deletedChallengeRestore','deletedChallengeRestore');
+        Route::delete('/permanentDeleteChallenges','permanentDeleteChallenges');
+        Route::delete('/permanentDeleteChallenge','permanentDeleteChallenge');
+    });
 
-    // Route::controller(StoryController::class)->group(function () {
-    //     Route::post('/createStory','createStory');
-    //     Route::post('/updateStory','updateStory');
-    //     Route::delete('/deleteStory','deleteStory');
-    //     Route::get('/getDeletedStories','getDeletedStories');
-    //     Route::post('/deletedStoriesRestore','deletedStoriesRestore');
-    //     Route::post('/deletedStoryRestore','deletedStoryRestore');
-    //     Route::delete('/permanentDeleteStories','permanentDeleteStories');
-    //     Route::delete('/permanentDeleteStory','permanentDeleteStory');
-    // });
+    Route::controller(StoryController::class)->group(function () {
+        Route::post('/createStory','createStory');
+        Route::post('/updateStory','updateStory');
+        Route::delete('/deleteStory','deleteStory');
+        Route::get('/getDeletedStories','getDeletedStories');
+        Route::get('/getDeletedStory','getDeletedStory');
+        Route::post('/deletedStoriesRestore','deletedStoriesRestore');
+        Route::post('/deletedStoryRestore','deletedStoryRestore');
+        Route::delete('/permanentDeleteStories','permanentDeleteStories');
+        Route::delete('/permanentDeleteStory','permanentDeleteStory');
+    });
 });
 
 Route::group(['middleware' => ['auth:sanctum']], function () {
@@ -73,11 +82,10 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     });
 
     Route::controller(UserController::class)->group(function () {
-        Route::get('/getAllUser','getAllUser');
-        Route::get('/getUser','getUser');
-        Route::get('/getUserProgress', 'getUserProgress');
-        Route::post('/updateUser','updateUser');
-        Route::post('/deleteUser','deleteUser');
+        Route::get('/getCurrentUser','getCurrentUser');
+        Route::get('/getCurrentUserProgress','getCurrentUserProgress');
+        Route::post('/updateCurrentUser','updateCurrentUser');
+        Route::post('/deleteCurrentUser','deleteCurrentUser');
     });
 });
 
@@ -87,57 +95,22 @@ Route::controller(AuthController::class)->group(function () {
 });
 
 Route::controller(ChapterController::class)->group(function () {
-
-    //no auth
     Route::get('/getAllChapter','getAllChapter');
     Route::get('/getChapter','getChapter');
     Route::get('/getChapterChallenges','getChapterChallenges');
-
-    //auth
-    Route::post('/createChapter','createChapter');
-    Route::post('/updateChapter','updateChapter');
-    Route::delete('/deleteChapter','deleteChapter');
-    Route::get('/getDeletedChapters','getDeletedChapters');
-    Route::post('/deletedChaptersRestore','deletedChaptersRestore');
-    Route::post('/deletedChapterRestore','deletedChapterRestore');
-    Route::delete('/permanentDeleteChapters','permanentDeleteChapters');
-    Route::delete('/permanentDeleteChapter','permanentDeleteChapter');
 });
 
 Route::controller(ChallengeController::class)->group(function () {
-
-    //no auth
     Route::get('/getAllChallenge','getAllChallenge');
     Route::get('/getChallenge','getChallenge');
     Route::get('/getChallengeImage','getChallengeImage');
     Route::post('/imageCompare','imageCompare');
-
-    //auth
-    Route::post('/createChallenge','createChallenge');
-    Route::post('/updateChallenge','updateChallenge');
-    Route::delete('/deleteChallenge','deleteChallenge');
-    Route::get('/getDeletedChallenges','getDeletedChallenges');
-    Route::post('/deletedChallengesRestore','deletedChallengesRestore');
-    Route::post('/deletedChallengeRestore','deletedChallengeRestore');
-    Route::delete('/permanentDeleteChallenges','permanentDeleteChallenges');
-    Route::delete('/permanentDeleteChallenge','permanentDeleteChallenge');
 });
 
 Route::controller(StoryController::class)->group(function () {
-    //no auth
     Route::get('/getAllStory','getAllStory');
     Route::get('/getStory','getStory');
     Route::get('/getStoryImage','getStoryImage');
     Route::post('/getStoryWithCondition','getStoryWithCondition');
     Route::post('/getStoryWithoutCondition','getStoryWithoutCondition');
-
-    //auth
-    Route::post('/createStory','createStory');
-    Route::post('/updateStory','updateStory');
-    Route::delete('/deleteStory','deleteStory');
-    Route::get('/getDeletedStories','getDeletedStories');
-    Route::post('/deletedStoriesRestore','deletedStoriesRestore');
-    Route::post('/deletedStoryRestore','deletedStoryRestore');
-    Route::delete('/permanentDeleteStories','permanentDeleteStories');
-    Route::delete('/permanentDeleteStory','permanentDeleteStory');
 });

@@ -8,6 +8,28 @@ use Illuminate\Http\Request;
 
 class UserController extends Controller
 {
+    public function updateCurrentUser(Request $request)
+    {
+        $user = $request->user();
+        foreach($request->all() as $key=>$value){
+            $user->update([$key=>$value]);
+        }
+
+        if (!$user) {
+            return response()->json([
+                "success" => false,
+                "data"    => $user,
+                "message" => "User update failed."
+            ]);
+        }
+
+        return response()->json([
+            "success" => true,
+            "data"    => $user,
+            "message" => "User successfully updated."
+        ]);
+    }
+
     public function updateUser(Request $request)
     {
         $user = User::findOrFail($request->id);
@@ -30,6 +52,16 @@ class UserController extends Controller
         ]);
     }
 
+    public function getCurrentUser(Request $request)
+    {
+        return $request->user();
+    }
+
+    public function getCurrentUserProgress(Request $request)
+    {
+        return $request->user()->progress;
+    }
+
     public function getAllUser()
     {
         return User::all();
@@ -43,6 +75,25 @@ class UserController extends Controller
     public function getUserProgress(Request $request)
     {
         return User::findOrFail($request->id)->progress;
+    }
+
+    public function deleteCurrentUser(Request $request)
+    {
+        $user = $request->user();
+        
+        if ($user->exists()) {
+            $user->progress->delete();
+            $user->delete();
+            return response()->json([
+                "success" => true,
+                "message" => "User successfully deleted."
+            ]);
+        }
+
+        return response()->json([
+            "success" => false,
+            "message" => "User not found."
+        ]);
     }
 
     public function deleteUser(Request $request)
