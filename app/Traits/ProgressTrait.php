@@ -23,7 +23,8 @@ trait ProgressTrait {
             if ($userProgress == null) {
                 $userProgress = $this->createUserProgress($user, $finished);
             }
-            $new_finished = $this->updateFinished($finished, $challenge_id);
+            
+            $new_finished = $this->updateFinished($userProgress->finished, $challenge_id);
             $userProgress->update(['finished' => $new_finished]);
         }
 
