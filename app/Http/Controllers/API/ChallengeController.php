@@ -50,20 +50,22 @@ class ChallengeController extends Controller
     
     public function updateChallenge(Request $request)
     {
-        $name = $request->name;
-        $image = $request->image;
-        $category = 'challenges';
-        $requestImage = $this->cutBase64($image);
-        $imageName = $name.'.'.$this->getType($image);
-        $path = $this->getPath($category, $name, $imageName);
-
         $challenge = Challenge::findOrFail($request->id);
-        foreach($request->all() as $key=>$value){
-            if ($key == 'image') {
-                $challenge->update([$key => $path]);
-            }
-            else {
-                $challenge->update([$key => $value]);
+        if ($challenge != null) {
+            foreach($request->all() as $key=>$value){
+                if ($key == 'image') {
+                    $name = $request->name;
+                    $image = $request->image;
+                    $category = 'challenges';
+                    $requestImage = $this->cutBase64($image);
+                    $imageName = $name.'.'.$this->getType($image);
+                    $path = $this->getPath($category, $name, $imageName);
+                    $challenge->update([$key => $path]);
+                    Storage::disk('public')->put($category.'/'.$name.'/'.$imageName, base64_decode($requestImage));
+                }
+                else {
+                    $challenge->update([$key => $value]);
+                }
             }
         }
 
@@ -75,7 +77,6 @@ class ChallengeController extends Controller
             ]);
         }
 
-        Storage::disk('public')->put($category.'/'.$name.'/'.$imageName, base64_decode($requestImage));
         return response()->json([
             "success" => true,
             "data"    => $challenge,
