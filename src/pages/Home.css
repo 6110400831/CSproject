@@ -13,3 +13,18 @@
 ion-toolbar {
   display: flex;
 }
+
+.tab-bar {
+
+}
+.tab{
+  cursor: pointer;
+  opacity: 0.6;
+  border: 0;
+  outline: 0;
+}
+
+.tab.active{
+  border-bottom: 2px solid white;
+  opacity: 1;
+}

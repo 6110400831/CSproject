@@ -17,3 +17,9 @@
   height: 100%;
   object-fit: contain;
 }
+
+.box:hover{
+  z-index: 0.1;
+  transform: scale(1.1);
+  transition: all 0.3s ease-in-out;
+}

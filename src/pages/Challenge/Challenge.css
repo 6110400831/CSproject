@@ -104,7 +104,7 @@ textarea {
 }
 
 .thisCAT::part(image){
-    height: 100px;
+  height: 100px;
   width: auto;
 }
 

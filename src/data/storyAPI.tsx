@@ -10,9 +10,10 @@ export const createStory = async (image: any, json: any) => {
     },
     headers: {
       "Content-type": "application/json",
+      Authorization: "Bearer " + sessionStorage.getItem("current_token"),
     },
   });
-  console.log("success");
+
   return http;
 };
 
@@ -20,6 +21,18 @@ export const getAllStory = async () => {
   const http = await axios({
     method: "get",
     url: "http://localhost:8000/api/getAllStory",
+  });
+
+  return http;
+};
+
+export const getStory = async (id: number) => {
+  const http = await axios({
+    method: "get",
+    url: "http://localhost:8000/api/getStory",
+    params: {
+      id: id,
+    },
   });
 
   return http;

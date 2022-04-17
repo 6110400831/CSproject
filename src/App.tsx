@@ -24,6 +24,8 @@ import "@ionic/react/css/display.css";
 
 /* Theme variables */
 import "./theme/variables.css";
+import RegisterPage from "./pages/Register/Register";
+import LoginPage from "./pages/Login/Login";
 
 setupIonicReact();
 
@@ -38,6 +40,14 @@ const App: React.FC = () => (
 
         <Route path="/admin" exact={true}>
           <AdminPage />
+        </Route>
+
+        <Route path="/login" exact={true}>
+          <LoginPage />
+        </Route>
+
+        <Route path="/register:registerPath" exact={true}>
+          <RegisterPage />
         </Route>
 
         <Route path="/gallery" exact={true}>

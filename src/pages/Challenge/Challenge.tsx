@@ -25,11 +25,13 @@ import html2canvas from "html2canvas";
 import { getViewerStatus, viewerStatus } from "../../data/viewerStatus";
 import { compareImage, getChallenge } from "../../data/challengeAPI";
 import { getChapter } from "../../data/chapterAPI";
+import { getCurrentUser } from "../../data/userAPI";
+import { logout } from "../../data/authAPI";
 
 function ChallengePage() {
   const [chapter, setChapter] = useState<any>();
   const [challenge, setChallenge] = useState<any>();
-  const [viewer, setViewer] = useState<string>();
+  const [User, setUser] = useState<any>(null);
 
   const [isProcessing, setIsProcessing] = useState<boolean>(false);
   const [code, setCode] = useState<string>("");
@@ -37,7 +39,6 @@ function ChallengePage() {
   const outputWrapperRef = React.useRef<HTMLDivElement>(null);
   const outputRef = React.useRef<HTMLIFrameElement>(null);
   const targetRef = React.useRef<HTMLIonImgElement>(null);
-  const [TrueOrFalse, setTrueOfFalse] = useState<boolean>(false);
 
   const [showModal, setShowModal] = useState<boolean>(false);
   const [contentText, setText] = useState<string>("Confirm Submit");
@@ -46,10 +47,8 @@ function ChallengePage() {
 
   const params = useParams<{ chapterId: string; challengeId: string }>();
 
-  useIonViewWillEnter(() => {
-    setViewer(getViewerStatus);
-
-    setPage();
+  useIonViewWillEnter(async () => {
+    await setPage();
   });
 
   const setPage = async () => {
@@ -60,9 +59,18 @@ function ChallengePage() {
       await Promise.resolve(getChallenge(parseInt(params.challengeId)))
     ).data.data;
     //console.log(chapter);
-    console.log(challenge);
+    //console.log(challenge);
     setChapter(chapter);
     setChallenge(challenge);
+
+    await getCurrentUser().then((user) => {
+      if (user) {
+        setUser(user.data);
+        //console.log(user);
+      } else {
+        console.log("plz login");
+      }
+    });
   };
 
   function setCodeValue(text: string) {
@@ -78,24 +86,30 @@ function ChallengePage() {
     });
     const outputImage = canvas.toDataURL("image/png", 1.0);
 
-    const targetImage = await (
-      await html2canvas(targetRef.current!, {
-        windowWidth: 300,
-        windowHeight: 300,
-        scale: 1,
-        logging: false,
-        useCORS: true,
-      })
-    ).toDataURL("image/png", 1.0);
+    // const targetImage = await (
+    //   await html2canvas(targetRef.current!, {
+    //     windowWidth: 300,
+    //     windowHeight: 300,
+    //     scale: 1,
+    //     logging: false,
+    //     useCORS: true,
+    //   })
+    // ).toDataURL("image/png", 1.0);
 
-    console.log(
-      compareImage(outputImage.split(",")[1], parseInt(params.challengeId))
+    let checkAns: boolean = false;
+    // console.log(compareImage(outputImage, parseInt(params.challengeId)));
+    await compareImage(outputImage, [], parseInt(params.challengeId)).then(
+      (val) => {
+        checkAns = val.data.status;
+        sessionStorage.setItem("finished_challenge", val.data.data.finished);
+      }
     );
+    console.log(sessionStorage.getItem("finished_challenge"));
 
     // console.log(outputImage);
     // console.log(targetImage);
 
-    if (outputImage === targetImage) {
+    if (checkAns) {
       return true;
     } else {
       return false;
@@ -173,8 +187,19 @@ function ChallengePage() {
             color="primary"
           ></IonIcon>
           <IonLabel className="ion-text-wrap mr-auto" slot="end">
-            {viewer}
+            {User == null ? "guest" : User?.name}
           </IonLabel>
+          <IonButton
+            slot="end"
+            style={{ display: User ? "block" : "none" }}
+            onClick={(e) =>
+              logout().then(() => {
+                window.location.replace("/");
+              })
+            }
+          >
+            Logout
+          </IonButton>
         </IonToolbar>
       </IonHeader>
 
@@ -235,13 +260,13 @@ function ChallengePage() {
                 <IonImg
                   id="target"
                   ref={targetRef}
-                  //src={challenge?.image}
-                  src={
-                    window.location.origin +
-                    "/assets/images/test" +
-                    challenge?.id +
-                    ".png"
-                  }
+                  src={challenge?.image}
+                  // src={
+                  //   window.location.origin +
+                  //   "/assets/images/test" +
+                  //   challenge?.id +
+                  //   ".png"
+                  // }
                   alt=""
                 />
                 <div className="descriptionText">{challenge?.description}</div>

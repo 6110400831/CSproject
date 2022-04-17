@@ -23,7 +23,7 @@ import { challenge } from "../../data/challenge";
 import { chapter, getChallenge, getChapter } from "../../data/chapter";
 import { getViewerStatus, viewerStatus } from "../../data/viewerStatus";
 import { story, thisStories } from "../../data/storyImage";
-import { getAllStory } from "../../data/stortAPI";
+import { getAllStory } from "../../data/storyAPI";
 import StoryList from "../../components/StoryList/StoryList";
 
 function StoryPage() {

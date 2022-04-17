@@ -9,23 +9,11 @@ import { story } from "../../data/storyImage";
 import "./StoryList.css";
 import { Swiper, SwiperSlide } from "swiper/react";
 
-interface ChallengeListBoxProps {
+interface StoryListBoxProps {
   stories: any[];
 }
 
-// const slideNumber: Number = Math.floor(Number(window.innerWidth / 300));
-
-// const slideConfig = {
-//   initialSlide: 1,
-//   slidesPerView: 1,
-//   grabCursor: true,
-//   allowSlideNext: true,
-//   allowSlidePrev: true,
-//   allowTouchMove: true,
-//   speed: 400,
-// };
-
-const ChallengeListBox: React.FC<ChallengeListBoxProps> = ({ stories }) => {
+const StoryListBox: React.FC<StoryListBoxProps> = ({ stories }) => {
   return (
     <div className="stories">
       {stories.map((story) => (
@@ -37,4 +25,4 @@ const ChallengeListBox: React.FC<ChallengeListBoxProps> = ({ stories }) => {
   );
 };
 
-export default ChallengeListBox;
+export default StoryListBox;

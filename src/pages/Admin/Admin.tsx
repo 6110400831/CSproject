@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { LegacyRef, useEffect, useRef, useState } from "react";
 import {
   IonBackButton,
   IonButton,
@@ -6,14 +6,17 @@ import {
   IonContent,
   IonHeader,
   IonIcon,
+  IonInput,
   IonItem,
   IonLabel,
   IonList,
+  IonModal,
   IonPage,
   IonRefresher,
   IonRefresherContent,
   IonSelect,
   IonSelectOption,
+  IonTextarea,
   IonTitle,
   IonToolbar,
   IonVirtualScroll,
@@ -21,55 +24,92 @@ import {
   useIonViewWillEnter,
 } from "@ionic/react";
 import "./Admin.css";
-import { chapter, getChapters } from "../../data/chapter";
-import ChallengeListBox from "../../components/ChallengeListBox/ChallengeListBox";
 import { personCircle } from "ionicons/icons";
-import { getViewerStatus, viewerStatus } from "../../data/viewerStatus";
 import React from "react";
-import axios from "axios";
+import {
+  createChapter,
+  getAllChallengeThisChapter,
+  getAllChapter,
+  updateChapter,
+} from "../../data/chapterAPI";
+import ChallengeListBox from "../../components/ChallengeListBox/ChallengeListBox";
+import { getCurrentUser } from "../../data/userAPI";
+import { logout } from "../../data/authAPI";
 
 const AdminPage: React.FC = () => {
-  const [Chapters, setChapters] = useState<chapter[]>([]);
+  const [allChapter, setAllChapter] = useState<any[]>([]);
+  const [User, setUser] = useState<any>(null);
 
   const ThisContent = React.useRef<HTMLIonContentElement>(null);
   const [ChapterList, setChapterList] = useState<HTMLIonTitleElement[]>([]);
 
+  const [formRef, setFormRef] = useState<LegacyRef<HTMLFormElement>>();
+  const [chapterName, setChapterName] = useState<string>("");
+  const [chapterDescription, setChapterDescription] = useState<string>("");
+
+  const [showModal, setShowModal] = useState<boolean>(false);
   const [viewEntered, setViewEnter] = useState<boolean>();
-  const [viewer, setViewer] = useState<string>();
 
-  var [selectedChapter, setSelectedChapter] = useState<number>();
+  const types = ["Challenge", "Story"];
+  const [tabActive, setTabActive] = useState(types[0]);
+  var [selectedChapter, setSelectedChapter] = useState<number>(0);
 
-  useIonViewWillEnter(() => {
-    setViewer(getViewerStatus);
-    setChapters(getChapters());
+  useIonViewWillEnter(async () => {
+    setViewEnter(false);
 
-    //console.log(getAllChallenge().then((val) => console.log(val.data)));
+    await setPage();
+    await getCurrentUser().then((user) => {
+      if (user) {
+        setUser(user.data);
+        //console.log(user);
+      } else {
+        console.log("plz login");
+      }
+    });
 
     setViewEnter(true);
   });
 
-  // const getAllChallenge = async () => {
-  //   const http = await axios({
-  //     method: "get",
-  //     url: "http://localhost:8000/api/testGetChallenge",
-  //   });
-  //   console.log("why?");
-  //   return http;
-  // };
+  const setPage = async () => {
+    const chapters: any[] = (await Promise.resolve(getAllChapter())).data;
+    setAllChapter(chapters);
+
+    for (let i = 0; i < chapters.length; i++) {
+      const val = (
+        await Promise.resolve(getAllChallengeThisChapter(chapters[i].id))
+      ).data;
+      chapters[i].challenges = val;
+    }
+    //setAllChallenge(challengeList);
+  };
 
   function scrollToView(e: any) {
     setSelectedChapter(e.detail.value);
-    //console.log(ThisContent);
 
     ThisContent.current?.scrollToPoint(
       0,
       ChapterList[Number(e.detail.value)]?.offsetTop - 60,
       1000
     );
-    //console.log(ChapterList[Number(selectedChapter)]);
   }
 
-  const refresh = (e: CustomEvent) => {
+  function setChapterFormValue() {
+    setShowModal(true);
+
+    if (selectedChapter !== 0) {
+      allChapter.forEach((el) => {
+        if (el.id === selectedChapter) {
+          setChapterName(el.name);
+          setChapterDescription(el.description);
+        }
+      });
+    } else {
+      setChapterName("");
+      setChapterDescription("");
+    }
+  }
+
+  const refresh = async (e: CustomEvent) => {
     setTimeout(() => {
       e.detail.complete();
     }, 1000);
@@ -91,7 +131,18 @@ const AdminPage: React.FC = () => {
             slot="end"
             color="primary"
           ></IonIcon>
-          <IonLabel slot="end">{viewer}</IonLabel>
+          <IonLabel slot="end">{User == null ? "guest" : User?.name}</IonLabel>
+          <IonButton
+            slot="end"
+            style={{ display: User ? "block" : "none" }}
+            onClick={(e) =>
+              logout().then(() => {
+                window.location.replace("/");
+              })
+            }
+          >
+            Logout
+          </IonButton>
         </IonToolbar>
       </IonHeader>
 
@@ -114,45 +165,113 @@ const AdminPage: React.FC = () => {
           </IonToolbar>
         </IonHeader>
 
-        <div className="d-flex">
+        <IonButtons className="tab-bar">
+          {types.map((type) => (
+            <IonButton
+              key={type}
+              className={tabActive === type ? "tab active" : "tab"}
+              onClick={() => setTabActive(type)}
+            >
+              {type}
+            </IonButton>
+          ))}
+        </IonButtons>
+
+        <div style={{ display: tabActive === "Challenge" ? "flex" : "none" }}>
           <IonItem class="chapterSelection">
-            <IonLabel position="floating">Chapter</IonLabel>
+            <IonLabel position="stacked">Chapter</IonLabel>
             <IonSelect
               className="dropdownChapter"
               interface="popover"
               value={selectedChapter}
               onIonChange={(e) => scrollToView(e)}
             >
-              {Chapters.map((c) => (
+              <IonSelectOption value={0} onClick={() => console.log("hello")}>
+                Add new chapter
+              </IonSelectOption>
+              {allChapter.map((c) => (
                 <IonSelectOption key={c.id} value={c.id}>
-                  {c.chapterName}
+                  {c.name}
                 </IonSelectOption>
               ))}
-              <IonSelectOption>Add new chapter</IonSelectOption>
             </IonSelect>
           </IonItem>
           <IonItem>
-            <IonButton>
-              <IonLabel>Edit this Chapter</IonLabel>
+            <IonButton onClick={() => setChapterFormValue()}>
+              <IonLabel>
+                {selectedChapter === 0
+                  ? "Create New Chapter"
+                  : "Edit This Chapter"}
+              </IonLabel>
             </IonButton>
           </IonItem>
         </div>
 
-        {viewEntered
-          ? Chapters.map((chapter) => (
-              <div className="mx-16" key={chapter.id}>
+        {viewEntered && tabActive === "Challenge"
+          ? allChapter.map((chapter) => (
+              <div className="my-16" key={chapter.id}>
                 <IonTitle ref={(ref) => ChapterList?.push(ref!)}>
-                  {chapter.chapterName}
+                  Chapter {chapter.name}
                 </IonTitle>
-                {/* <ChallengeListBox Chapter={chapter} adminEntered={true} /> */}
+                <ChallengeListBox
+                  ChallengeThisChapter={chapter.challenges}
+                  adminEntered={true}
+                  ChapterId={chapter.id}
+                />
               </div>
             ))
           : null}
-
-        {/* <IonButton
-      onClick={(e) => console.log(Chapters[selectedChapter])}
-    ></IonButton> */}
       </IonContent>
+
+      <IonModal
+        className="editChapterModal"
+        isOpen={showModal}
+        swipeToClose={true}
+        onDidDismiss={() => setShowModal(false)}
+      >
+        <form
+          ref={formRef}
+          onSubmit={async (e: React.SyntheticEvent) => {
+            e.preventDefault();
+            const target = e.target as typeof e.target & {
+              chapterName: { value: string };
+              chapterDescription: { value: string };
+            };
+            const name = target.chapterName.value;
+            const description = target.chapterDescription.value;
+
+            if (selectedChapter === 0) {
+              await createChapter(name, description);
+            } else {
+              await updateChapter(selectedChapter!, name, description);
+            }
+
+            window.location.reload();
+          }}
+        >
+          <IonItem>
+            <IonLabel position="stacked">Chapter Name</IonLabel>
+            <IonInput
+              name="chapterName"
+              id="edit-name"
+              type="text"
+              value={chapterName}
+              required
+              placeholder="Enter new chapter name"
+            ></IonInput>
+          </IonItem>
+          <IonItem>
+            <IonLabel position="stacked">Description</IonLabel>
+            <IonTextarea
+              name="chapterDescription"
+              id="edit-description"
+              value={chapterDescription}
+              placeholder="Enter chapter description"
+            ></IonTextarea>
+          </IonItem>
+          <IonButton type="submit">Submit</IonButton>
+        </form>
+      </IonModal>
     </IonPage>
   );
 };

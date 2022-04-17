@@ -1,17 +1,39 @@
 import axios from "axios";
 
-export const createChapter = async (json: any) => {
+export const createChapter = async (name: string, description: string) => {
   const http = await axios({
     method: "post",
     url: "http://localhost:8000/api/createChapter",
     data: {
-      json: json,
+      name: name,
+      description: name,
     },
     headers: {
-      "Content-type": "application/json",
+      "content-type": "application/json",
+      Authorization: "Bearer " + sessionStorage.getItem("current_token"),
     },
   });
-  console.log("success");
+  return http;
+};
+
+export const updateChapter = async (
+  id: number,
+  name: string,
+  description: string
+) => {
+  const http = await axios({
+    method: "post",
+    url: "http://localhost:8000/api/updateChapter",
+    data: {
+      id: id,
+      name: name,
+      description: description,
+    },
+    headers: {
+      "content-type": "application/json",
+      Authorization: "Bearer " + sessionStorage.getItem("current_token"),
+    },
+  });
   return http;
 };
 
@@ -23,7 +45,6 @@ export const getChapter = async (id: number) => {
       id: id,
     },
   });
-  console.log("success");
   return http;
 };
 
@@ -32,7 +53,6 @@ export const getAllChapter = async () => {
     method: "get",
     url: "http://localhost:8000/api/getAllChapter",
   });
-  console.log("success");
   return http;
 };
 
@@ -44,6 +64,5 @@ export const getAllChallengeThisChapter = async (chapterId: number) => {
       id: chapterId,
     },
   });
-  console.log("success");
   return http;
 };

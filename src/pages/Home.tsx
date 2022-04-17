@@ -1,6 +1,7 @@
 import { useState } from "react";
 import {
   IonButton,
+  IonButtons,
   IonContent,
   IonHeader,
   IonIcon,
@@ -11,47 +12,74 @@ import {
   IonRefresherContent,
   IonSelect,
   IonSelectOption,
+  IonTabBar,
+  IonTabButton,
+  IonTabs,
   IonTitle,
   IonToolbar,
   useIonViewWillEnter,
+  useIonViewWillLeave,
 } from "@ionic/react";
 import "./Home.css";
 import { getAllChallengeThisChapter, getAllChapter } from "../data/chapterAPI";
 import ChallengeListBox from "../components/ChallengeListBox/ChallengeListBox";
 import { personCircle } from "ionicons/icons";
-import { getViewerStatus, viewerStatus } from "../data/viewerStatus";
 import React from "react";
+import { getCurrentUser } from "../data/userAPI";
+import { logout } from "../data/authAPI";
+import StoryList from "../components/StoryList/StoryList";
+import { getAllStory } from "../data/storyAPI";
 
 const Home: React.FC = () => {
+  const [User, setUser] = useState<any>(null);
   const [allChapter, setAllChapter] = useState<any[]>([]);
-  const [allChallenge, setAllChallenge] = useState<any[]>([]);
+  const [allStory, setAllStory] = useState<any[]>([]);
 
   const ThisContent = React.useRef<HTMLIonContentElement>(null);
   const [ChapterList, setChapterList] = useState<HTMLIonTitleElement[]>([]);
 
   const [viewEntered, setViewEnter] = useState<boolean>();
-  const [viewer, setViewer] = useState<string>();
 
-  var [selectedChapter, setSelectedChapter] = useState<number>();
+  const types = ["Challenge", "Story"];
+  const [tabActive, setTabActive] = useState(types[0]);
+  var [selectedChapter, setSelectedChapter] = useState<number>(0);
 
   useIonViewWillEnter(async () => {
-    setViewer(getViewerStatus);
-    // setChapters(getChapters());
+    setViewEnter(false);
+
+    await setPage();
+
+    setViewEnter(true);
+  });
+
+  useIonViewWillLeave(async () => {
+    setViewEnter(false);
+  });
+
+  async function setPage() {
+    await getCurrentUser().then((user) => {
+      if (user) {
+        setUser(user.data);
+        //console.log(user);
+      } else {
+        console.log("plz login");
+      }
+    });
+
     const chapters: any[] = (await Promise.resolve(getAllChapter())).data;
     setAllChapter(chapters);
 
-    let challengeList: any[] = [];
     for (let i = 0; i < chapters.length; i++) {
       const val = (
         await Promise.resolve(getAllChallengeThisChapter(chapters[i].id))
       ).data;
-      challengeList[i] = [...val];
+      chapters[i].challenges = val;
     }
-    setAllChallenge(challengeList);
 
-    setSelectedChapter(1);
-    setViewEnter(true);
-  });
+    const stories = (await Promise.resolve(getAllStory())).data.data;
+    //console.log(stories);
+    setAllStory(stories);
+  }
 
   function scrollToView(e: any) {
     setSelectedChapter(e.detail.value);
@@ -65,6 +93,8 @@ const Home: React.FC = () => {
   }
 
   const refresh = (e: CustomEvent) => {
+    window.location.reload();
+
     setTimeout(() => {
       e.detail.complete();
     }, 1000);
@@ -77,16 +107,45 @@ const Home: React.FC = () => {
           <IonTitle className="title" slot="start">
             CSS with CAT
           </IonTitle>
-          {/* <IonButton routerLink="/admin" slot="start">
-            edit
-          </IonButton> */}
+          <IonButton
+            routerLink="/admin"
+            slot="start"
+            style={{ display: User?.role === "admin" ? "block" : "none" }}
+          >
+            Edit
+          </IonButton>
           <IonIcon
             className="mr-auto"
             icon={personCircle}
             slot="end"
             color="primary"
           ></IonIcon>
-          <IonLabel slot="end">{viewer}</IonLabel>
+          <IonLabel slot="end">{User == null ? "guest" : User?.name}</IonLabel>
+          <IonButton
+            slot="end"
+            style={{ display: User ? "block" : "none" }}
+            onClick={(e) =>
+              logout().then(() => {
+                window.location.reload();
+              })
+            }
+          >
+            Logout
+          </IonButton>
+          <IonButton
+            slot="end"
+            routerLink="/login"
+            style={{ display: User ? "none" : "block" }}
+          >
+            Login
+          </IonButton>
+          <IonButton
+            slot="end"
+            routerLink="/register_user"
+            style={{ display: User ? "none" : "block" }}
+          >
+            Sign up
+          </IonButton>
         </IonToolbar>
       </IonHeader>
 
@@ -109,15 +168,30 @@ const Home: React.FC = () => {
           </IonToolbar>
         </IonHeader>
 
-        <div className="d-flex">
+        <IonButtons className="tab-bar">
+          {types.map((type) => (
+            <IonButton
+              key={type}
+              className={tabActive === type ? "tab active" : "tab"}
+              onClick={() => setTabActive(type)}
+            >
+              {type}
+            </IonButton>
+          ))}
+        </IonButtons>
+
+        <div style={{ display: tabActive === "Challenge" ? "flex" : "none" }}>
           <IonItem class="chapterSelection">
-            <IonLabel position="floating">Chapter</IonLabel>
+            <IonLabel position="stacked">Chapter</IonLabel>
             <IonSelect
               className="dropdownChapter"
               interface="popover"
               value={selectedChapter}
               onIonChange={(e) => scrollToView(e)}
             >
+              <IonSelectOption value={0}>
+                Select Chapter to play
+              </IonSelectOption>
               {allChapter.map((c) => (
                 <IonSelectOption key={c.id} value={c.id}>
                   {c.name}
@@ -125,25 +199,25 @@ const Home: React.FC = () => {
               ))}
             </IonSelect>
           </IonItem>
-          <IonItem>
+          {/* <IonItem>
             <IonButton routerLink="/gallery">
               <IonLabel>Story Gallery</IonLabel>
             </IonButton>
-          </IonItem>
+          </IonItem> */}
         </div>
 
-        {viewEntered
+        {viewEntered && tabActive === "Challenge"
           ? allChapter.map((chapter) => (
               <div className="my-16" key={chapter.id}>
                 <IonTitle ref={(ref) => ChapterList?.push(ref!)}>
-                  {chapter.name}
+                  Chapter {chapter.name}
                 </IonTitle>
-                <ChallengeListBox
-                  ChallengeThisChapter={allChallenge[chapter.id - 1]}
-                />
+                <ChallengeListBox ChallengeThisChapter={chapter.challenges} />
               </div>
             ))
           : null}
+
+        {tabActive === "Story" ? <StoryList stories={allStory} /> : null}
       </IonContent>
     </IonPage>
   );
