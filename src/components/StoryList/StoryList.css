@@ -4,12 +4,30 @@
 }
 
 #story-image {
-  margin-right: 12px;
-  margin-bottom: 12px;
+  margin-right: 16px;
+  margin-bottom: 16px;
 }
 
 #story-image::part(image) {
   background-color: #fff;
   width: 180px;
   height: 180px;
+}
+
+.locker{
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 180px;
+  height: 180px;
+  display: flex;
+  justify-content: end;
+  border: 2px solid whitesmoke;
+}
+
+.greyBox{
+  z-index: 9;
+  background-color: rgba(9,9,9, 0.9);
+  width: calc(100% - (100%*(var(--finished-number)/var(--condition))));
+  height: 100%;
 }

@@ -2,7 +2,7 @@
     width: 250px;
 }
 
-.editChapterModal::part(content) {
+.editChapterModal::part(content) ,.editStoryModal::part(content) {
     padding: 16px;
     --width: 350px;
     --height: 90vh;
@@ -32,12 +32,4 @@ ion-item{
 .tab.active{
   border-bottom: 2px solid white;
   opacity: 1;
-}
-
-#edit-name{
-    
-}
-
-#edit-description{
-   
 }

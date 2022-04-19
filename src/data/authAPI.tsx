@@ -1,4 +1,5 @@
 import axios from "axios";
+import { getCurrentUserProgress } from "./userAPI";
 
 export const register = async (
   name: any,
@@ -49,6 +50,7 @@ export const logout = async () => {
     },
   });
 
+  sessionStorage.removeItem("finished_challenge");
   sessionStorage.removeItem("current_token");
   console.log("logout success");
   return http;

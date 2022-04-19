@@ -1,6 +1,7 @@
 import axios from "axios";
 
 export const createStory = async (image: any, json: any) => {
+  console.log(image, json);
   const http = await axios({
     method: "post",
     url: "http://localhost:8000/api/createStory",
@@ -9,7 +10,6 @@ export const createStory = async (image: any, json: any) => {
       json: json,
     },
     headers: {
-      "Content-type": "application/json",
       Authorization: "Bearer " + sessionStorage.getItem("current_token"),
     },
   });

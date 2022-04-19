@@ -1,7 +1,9 @@
 import { useState } from "react";
 import {
+  IonBadge,
   IonButton,
   IonButtons,
+  IonChip,
   IonContent,
   IonHeader,
   IonIcon,
@@ -25,7 +27,7 @@ import { getAllChallengeThisChapter, getAllChapter } from "../data/chapterAPI";
 import ChallengeListBox from "../components/ChallengeListBox/ChallengeListBox";
 import { personCircle } from "ionicons/icons";
 import React from "react";
-import { getCurrentUser } from "../data/userAPI";
+import { getCurrentUser, getCurrentUserProgress } from "../data/userAPI";
 import { logout } from "../data/authAPI";
 import StoryList from "../components/StoryList/StoryList";
 import { getAllStory } from "../data/storyAPI";
@@ -50,6 +52,12 @@ const Home: React.FC = () => {
     await setPage();
 
     setViewEnter(true);
+    if (sessionStorage.getItem("finished_challenge") === null) {
+      await getCurrentUserProgress().then((data) => {
+        //console.log(data.data);
+        sessionStorage.setItem("finished_challenge", data.data);
+      });
+    }
   });
 
   useIonViewWillLeave(async () => {
@@ -77,7 +85,7 @@ const Home: React.FC = () => {
     }
 
     const stories = (await Promise.resolve(getAllStory())).data.data;
-    //console.log(stories);
+    console.log(stories);
     setAllStory(stories);
   }
 
@@ -114,13 +122,21 @@ const Home: React.FC = () => {
           >
             Edit
           </IonButton>
-          <IonIcon
-            className="mr-auto"
-            icon={personCircle}
-            slot="end"
-            color="primary"
-          ></IonIcon>
-          <IonLabel slot="end">{User == null ? "guest" : User?.name}</IonLabel>
+          <IonChip slot="end">
+            <IonIcon
+              className="mr-auto"
+              icon={personCircle}
+              color="primary"
+            ></IonIcon>
+            <IonBadge color="tertiary" style={{ marginRight: "16px" }}>
+              {User == null ? "guest" : User?.name}
+            </IonBadge>
+          </IonChip>
+          <IonBadge color="danger" style={{ marginRight: "16px" }} slot="end">
+            {sessionStorage.getItem("finished_challenge")
+              ? sessionStorage.getItem("finished_challenge")?.split(",").length
+              : null}
+          </IonBadge>
           <IonButton
             slot="end"
             style={{ display: User ? "block" : "none" }}
@@ -217,7 +233,11 @@ const Home: React.FC = () => {
             ))
           : null}
 
-        {tabActive === "Story" ? <StoryList stories={allStory} /> : null}
+        {tabActive === "Story" ? (
+          <div style={{ marginTop: "16px" }}>
+            <StoryList stories={allStory} />
+          </div>
+        ) : null}
       </IonContent>
     </IonPage>
   );

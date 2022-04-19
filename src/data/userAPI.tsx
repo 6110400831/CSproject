@@ -66,18 +66,3 @@ export const getUser = async (id: number) => {
 
   return http;
 };
-
-export const getUserProgress = async (id: number) => {
-  const http = await axios({
-    method: "get",
-    url: "http://localhost:8000/api/getUserProgress",
-    params: {
-      id: id,
-    },
-    headers: {
-      Authorization: "Bearer " + sessionStorage.getItem("current_token"),
-    },
-  });
-
-  return http;
-};

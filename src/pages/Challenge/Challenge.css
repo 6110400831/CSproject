@@ -118,17 +118,17 @@ textarea {
     left: 10%;
   }
   48% {
-    -webkit-transform: rotateY(0deg); 
+    /* -webkit-transform: rotateY(0deg);  */
   }
   50% { 
     left: calc(100% - 100px);
-    -webkit-transform: rotateY(180deg); 
+    /* -webkit-transform: rotateY(180deg);  */
   }
-  98% {
+  /* 98% {
     -webkit-transform: rotateY(180deg); 
-  }
+  } */
   100% {
     left: 10%;    
-     -webkit-transform: rotateY(0deg);
+     /* -webkit-transform: rotateY(0deg); */
   }
 }

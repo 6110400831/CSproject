@@ -67,9 +67,9 @@ const RegisterPage: React.FC = () => {
               ? "Create new admin account"
               : "Create new account"}
           </IonTitle>
-          <IonButton type="submit" routerLink="/login">
+          {/* <IonButton routerLink="/login">
             login
-          </IonButton>
+          </IonButton> */}
         </IonToolbar>
       </IonHeader>
 
@@ -95,9 +95,13 @@ const RegisterPage: React.FC = () => {
             const name = target.username.value;
             const role = params.registerPath === "_user" ? "user" : "admin";
             const email = target.email.value;
-            const password = target.email.value;
+            const password = target.password.value;
             const confirmPassword = target.confirmPassword.value;
-            console.log(name, role, email, password, confirmPassword);
+            //console.log(name, role, email, password, confirmPassword);
+
+            if (password !== confirmPassword) {
+              alert("confirm passord is incorrect");
+            }
 
             const token = register(
               name,
@@ -107,9 +111,17 @@ const RegisterPage: React.FC = () => {
               confirmPassword
             );
 
-            token.then((thisData) => {
-              sessionStorage.setItem("current_token", thisData?.data?.token);
-            });
+            // token.then((data) => {
+            //   console.log(data);
+            // });
+
+            token
+              .then((thisData) => {
+                sessionStorage.setItem("current_token", thisData?.data?.token);
+              })
+              .then(() => {
+                window.location.replace("/");
+              });
           }}
         >
           <IonItem>
@@ -152,9 +164,7 @@ const RegisterPage: React.FC = () => {
               placeholder="Enter the same password as above"
             ></IonInput>
           </IonItem>
-          <IonButton type="submit" routerLink="/">
-            Submit
-          </IonButton>
+          <IonButton type="submit">Submit</IonButton>
         </form>
       </IonContent>
     </IonPage>

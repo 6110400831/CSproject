@@ -1,8 +1,10 @@
 import { LegacyRef, useEffect, useRef, useState } from "react";
 import {
   IonBackButton,
+  IonBadge,
   IonButton,
   IonButtons,
+  IonChip,
   IonContent,
   IonHeader,
   IonIcon,
@@ -35,10 +37,13 @@ import {
 import ChallengeListBox from "../../components/ChallengeListBox/ChallengeListBox";
 import { getCurrentUser } from "../../data/userAPI";
 import { logout } from "../../data/authAPI";
+import StoryList from "../../components/StoryList/StoryList";
+import { createStory, getAllStory } from "../../data/storyAPI";
 
 const AdminPage: React.FC = () => {
   const [allChapter, setAllChapter] = useState<any[]>([]);
   const [User, setUser] = useState<any>(null);
+  const [allStory, setAllStory] = useState<any[]>([]);
 
   const ThisContent = React.useRef<HTMLIonContentElement>(null);
   const [ChapterList, setChapterList] = useState<HTMLIonTitleElement[]>([]);
@@ -47,8 +52,16 @@ const AdminPage: React.FC = () => {
   const [chapterName, setChapterName] = useState<string>("");
   const [chapterDescription, setChapterDescription] = useState<string>("");
 
+  const [formStoryRef, setFormStoryRef] =
+    useState<LegacyRef<HTMLFormElement>>();
+  const [storyName, setStoryName] = useState<string>("");
+  const [storyDescription, setStoryDescription] = useState<string>("");
+  const [condition, setConditon] = useState<number>(0);
+  const [image, setImage] = useState<any>();
+
   const [showModal, setShowModal] = useState<boolean>(false);
   const [viewEntered, setViewEnter] = useState<boolean>();
+  const [showStoryModal, setShowStoryModal] = useState<boolean>(false);
 
   const types = ["Challenge", "Story"];
   const [tabActive, setTabActive] = useState(types[0]);
@@ -67,6 +80,9 @@ const AdminPage: React.FC = () => {
       }
     });
 
+    // console.log(
+    //   sessionStorage.getItem("finished_challenge")?.split(",").length
+    // );
     setViewEnter(true);
   });
 
@@ -81,6 +97,9 @@ const AdminPage: React.FC = () => {
       chapters[i].challenges = val;
     }
     //setAllChallenge(challengeList);
+    const stories = (await Promise.resolve(getAllStory())).data.data;
+    //console.log(stories);
+    setAllStory(stories);
   };
 
   function scrollToView(e: any) {
@@ -109,6 +128,25 @@ const AdminPage: React.FC = () => {
     }
   }
 
+  const uploadPhoto = async (fileChangeEvent: any) => {
+    if (fileChangeEvent.target.files[0]) {
+      const photo = await URL.createObjectURL(fileChangeEvent.target.files[0]);
+      var img = new Image();
+      img.src = photo;
+      img.crossOrigin = "Anonymous";
+      setImage(photo);
+    }
+  };
+
+  function setStoryFormValue() {
+    setStoryName("");
+    setStoryDescription("");
+    setConditon(0);
+    setImage(null);
+
+    setShowStoryModal(true);
+  }
+
   const refresh = async (e: CustomEvent) => {
     setTimeout(() => {
       e.detail.complete();
@@ -125,13 +163,16 @@ const AdminPage: React.FC = () => {
           <IonTitle className="title" slot="start">
             EDIT THE BOX
           </IonTitle>
-          <IonIcon
-            className="mr-auto"
-            icon={personCircle}
-            slot="end"
-            color="primary"
-          ></IonIcon>
-          <IonLabel slot="end">{User == null ? "guest" : User?.name}</IonLabel>
+          <IonChip slot="end">
+            <IonIcon
+              className="mr-auto"
+              icon={personCircle}
+              color="primary"
+            ></IonIcon>
+            <IonBadge color="tertiary" style={{ marginRight: "16px" }}>
+              {User == null ? "guest" : User?.name}
+            </IonBadge>
+          </IonChip>
           <IonButton
             slot="end"
             style={{ display: User ? "block" : "none" }}
@@ -221,6 +262,13 @@ const AdminPage: React.FC = () => {
               </div>
             ))
           : null}
+
+        {tabActive === "Story" ? (
+          <>
+            <IonButton onClick={setStoryFormValue}>Create New Story</IonButton>
+            <StoryList stories={allStory} />
+          </>
+        ) : null}
       </IonContent>
 
       <IonModal
@@ -269,6 +317,88 @@ const AdminPage: React.FC = () => {
               placeholder="Enter chapter description"
             ></IonTextarea>
           </IonItem>
+          <IonButton type="submit">Submit</IonButton>
+        </form>
+      </IonModal>
+
+      <IonModal
+        className="editStoryModal"
+        isOpen={showStoryModal}
+        swipeToClose={true}
+        onDidDismiss={() => setShowStoryModal(false)}
+      >
+        <form
+          ref={formStoryRef}
+          onSubmit={async (e: React.SyntheticEvent) => {
+            e.preventDefault();
+            const target = e.target as typeof e.target & {
+              storyName: { value: string };
+              storyDescription: { value: string };
+              condition: { value: number };
+              imageFile: { value: any };
+            };
+            const name = target.storyName.value;
+            const description = target.storyDescription.value;
+            const condition = target.condition.value;
+            const image = target.imageFile.value;
+
+            const json = {
+              name: name,
+              description: description,
+              condition: condition,
+            };
+            //console.log(name, description, condition, image);
+            console.log(JSON.stringify(json));
+            createStory(image, JSON.stringify(json));
+
+            // window.location.reload();
+          }}
+        >
+          <IonItem>
+            <IonLabel position="stacked">Story Name</IonLabel>
+            <IonInput
+              name="storyName"
+              type="text"
+              value={storyName}
+              required
+              placeholder="Enter new story name"
+            ></IonInput>
+          </IonItem>
+          <IonItem>
+            <IonLabel position="stacked">Story Description</IonLabel>
+            <IonTextarea
+              name="storyDescription"
+              value={storyDescription}
+              placeholder="Enter this story description"
+              required
+            ></IonTextarea>
+          </IonItem>
+          <IonItem>
+            <IonLabel position="stacked">Condition</IonLabel>
+            <IonInput
+              name="condition"
+              type="number"
+              value={condition}
+              min="0"
+              required
+              placeholder="Enter the number of challenge to unlock story"
+            ></IonInput>
+          </IonItem>
+          <input
+            name="imageFile"
+            type="file"
+            onChange={(ev) => uploadPhoto(ev)}
+            accept="image/png, image/jpeg"
+            required
+          ></input>
+          <img
+            src={image}
+            width="300"
+            height="300"
+            id="canvas"
+            alt="preview img"
+            style={{ display: image ? "block" : "none" }}
+          />
           <IonButton type="submit">Submit</IonButton>
         </form>
       </IonModal>

@@ -25,7 +25,7 @@ import html2canvas from "html2canvas";
 import { getViewerStatus, viewerStatus } from "../../data/viewerStatus";
 import { compareImage, getChallenge } from "../../data/challengeAPI";
 import { getChapter } from "../../data/chapterAPI";
-import { getCurrentUser } from "../../data/userAPI";
+import { getCurrentUser, getCurrentUserProgress } from "../../data/userAPI";
 import { logout } from "../../data/authAPI";
 
 function ChallengePage() {
@@ -71,6 +71,13 @@ function ChallengePage() {
         console.log("plz login");
       }
     });
+
+    if (sessionStorage.getItem("finished_challenge") === null) {
+      await getCurrentUserProgress().then((data) => {
+        //console.log(data.data);
+        sessionStorage.setItem("finished_challenge", data.data);
+      });
+    }
   };
 
   function setCodeValue(text: string) {
@@ -98,13 +105,19 @@ function ChallengePage() {
 
     let checkAns: boolean = false;
     // console.log(compareImage(outputImage, parseInt(params.challengeId)));
+    // let finished: any[] = [];
+    // if (sessionStorage.getItem("finished_challenge")) {
+    //   finished = sessionStorage.getItem("finished_challenge")?.split(",")!;
+    // }
     await compareImage(outputImage, [], parseInt(params.challengeId)).then(
       (val) => {
         checkAns = val.data.status;
         sessionStorage.setItem("finished_challenge", val.data.data.finished);
       }
     );
-    console.log(sessionStorage.getItem("finished_challenge"));
+    //console.log(sessionStorage.getItem("finished_challenge"));
+
+    // downloadImage(outputImage, challenge.name);
 
     // console.log(outputImage);
     // console.log(targetImage);
@@ -269,6 +282,7 @@ function ChallengePage() {
                   // }
                   alt=""
                 />
+                <div>300 x 300 px</div>
                 <div className="descriptionText">{challenge?.description}</div>
               </div>
             </IonCol>
